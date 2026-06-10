@@ -270,6 +270,20 @@ export default function Home() {
             <a href={GUIDE_URL} className="hover:text-white">
               이용 가이드
             </a>
+            <a
+              href="https://smithery.ai/servers/heirmos/memory"
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="Smithery 에서 Heirmos MCP 보기"
+              className="hover:opacity-80"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://smithery.ai/badge/heirmos/memory"
+                alt="smithery badge"
+                className="h-5 w-auto"
+              />
+            </a>
           </div>
           <p className="text-xs text-zinc-600">
             © {new Date().getFullYear()} Heirmos
