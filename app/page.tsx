@@ -11,6 +11,7 @@ import {
 
 const DASHBOARD_URL = "https://dashboard.heirmos.com";
 const GUIDE_URL = "https://dashboard.heirmos.com/guide";
+const CONTACT_EMAIL = "team.pneumora@gmail.com";
 
 const AIS = ["Claude", "ChatGPT", "Grok", "Gemini", "Codex"];
 
@@ -254,6 +255,16 @@ export default function Home() {
                   이용 가이드
                 </CtaButton>
               </div>
+              <p className="mt-6 text-sm text-zinc-400">
+                궁금한 점이 있으신가요?{" "}
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="font-medium text-[var(--color-brand-accent)] hover:underline"
+                >
+                  {CONTACT_EMAIL}
+                </a>{" "}
+                로 문의하세요.
+              </p>
             </div>
           </div>
         </section>
@@ -269,6 +280,9 @@ export default function Home() {
             </a>
             <a href={GUIDE_URL} className="hover:text-white">
               이용 가이드
+            </a>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white">
+              문의
             </a>
             <a
               href="https://smithery.ai/servers/heirmos/memory"
