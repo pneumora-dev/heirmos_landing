@@ -1,0 +1,8 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Heirmos monochrome icon</title>
+  <g stroke="#071A3D" stroke-width="58" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 108 C132 160 132 207 150 256 C168 305 168 352 150 404"/>
+    <path d="M362 108 C380 160 380 207 362 256 C344 305 344 352 362 404"/>
+    <path d="M150 256 C195 221 236 224 258 256 C285 295 325 292 362 256"/>
+  </g>
+</svg>

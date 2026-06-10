@@ -1,0 +1,39 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Heirmos favicon</title>
+  <desc>Small-size optimized Heirmos line-built H mark.</desc>
+  <style>
+    /* On dark browser chrome (Chrome/Edge honor prefers-color-scheme in SVG
+       favicons) lift the navy midsection to light so the H doesn't read as two
+       dots. Safari/Firefox ignore this and fall back to the navy gradient. */
+    @media (prefers-color-scheme: dark) {
+      .s0 { stop-color: #B8A6FF; }
+      .s1 { stop-color: #FFFFFF; }
+      .s2 { stop-color: #FFFFFF; }
+      .s3 { stop-color: #75E4FF; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="heirmosLine" x1="130" y1="108" x2="382" y2="404" gradientUnits="userSpaceOnUse">
+      <stop class="s0" offset="0" stop-color="#8F6BFF"/>
+      <stop class="s1" offset="0.30" stop-color="#0B2454"/>
+      <stop class="s2" offset="0.70" stop-color="#071A3D"/>
+      <stop class="s3" offset="1" stop-color="#48D7FF"/>
+    </linearGradient>
+  </defs>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 108
+             C132 160 132 207 150 256
+             C168 305 168 352 150 404"
+          stroke="url(#heirmosLine)" stroke-width="60"/>
+    <path d="M362 108
+             C380 160 380 207 362 256
+             C344 305 344 352 362 404"
+          stroke="url(#heirmosLine)" stroke-width="60"/>
+    <path d="M150 256
+             C195 221 236 224 258 256
+             C285 295 325 292 362 256"
+          stroke="url(#heirmosLine)" stroke-width="60"/>
+    <circle cx="150" cy="108" r="20" fill="#8F6BFF" stroke="#FFFFFF" stroke-width="8"/>
+    <circle cx="362" cy="404" r="20" fill="#48D7FF" stroke="#FFFFFF" stroke-width="8"/>
+  </g>
+</svg>

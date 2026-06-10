@@ -1,0 +1,19 @@
+<svg viewBox="100 71 311 370" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Heirmos">
+  <title>Heirmos</title>
+  <!-- Dark-surface variant of heirmos-mark.svg (light gradient + navy node rings). -->
+  <defs>
+    <linearGradient id="heirmosLineDark" x1="128" y1="104" x2="386" y2="408" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#B8A6FF"/>
+      <stop offset="0.45" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#75E4FF"/>
+    </linearGradient>
+  </defs>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 108 C132 160 132 207 150 256 C168 305 168 352 150 404" stroke="url(#heirmosLineDark)" stroke-width="54"/>
+    <path d="M362 108 C380 160 380 207 362 256 C344 305 344 352 362 404" stroke="url(#heirmosLineDark)" stroke-width="54"/>
+    <path d="M150 256 C195 221 236 224 258 256 C285 295 325 292 362 256" stroke="url(#heirmosLineDark)" stroke-width="54"/>
+    <circle cx="150" cy="108" r="18" fill="#B8A6FF" stroke="#071A3D" stroke-width="7"/>
+    <circle cx="258" cy="256" r="15.5" fill="#8EB8FF" stroke="#071A3D" stroke-width="7"/>
+    <circle cx="362" cy="404" r="18" fill="#75E4FF" stroke="#071A3D" stroke-width="7"/>
+  </g>
+</svg>

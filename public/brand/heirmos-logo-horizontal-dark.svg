@@ -1,0 +1,25 @@
+<svg width="1280" height="360" viewBox="0 0 1280 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Heirmos horizontal logo dark mode</title>
+  <defs>
+    <linearGradient id="heirmosLine" x1="128" y1="104" x2="386" y2="408" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#B8A6FF"/>
+      <stop offset="0.45" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#75E4FF"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(58 44) scale(0.62)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 108 C132 160 132 207 150 256 C168 305 168 352 150 404"
+          stroke="url(#heirmosLine)" stroke-width="54"/>
+    <path d="M362 108 C380 160 380 207 362 256 C344 305 344 352 362 404"
+          stroke="url(#heirmosLine)" stroke-width="54"/>
+    <path d="M150 256 C195 221 236 224 258 256 C285 295 325 292 362 256"
+          stroke="url(#heirmosLine)" stroke-width="54"/>
+    <circle cx="150" cy="108" r="18" fill="#B8A6FF" stroke="#071A3D" stroke-width="7"/>
+    <circle cx="258" cy="256" r="15.5" fill="#8EB8FF" stroke="#071A3D" stroke-width="7"/>
+    <circle cx="362" cy="404" r="18" fill="#75E4FF" stroke="#071A3D" stroke-width="7"/>
+  </g>
+  <text x="352" y="224"
+        font-family="Inter, Avenir Next, SF Pro Display, Segoe UI, Arial, sans-serif"
+        font-size="116" font-weight="700" letter-spacing="-4.2"
+        fill="#FFFFFF">Heirmos</text>
+</svg>

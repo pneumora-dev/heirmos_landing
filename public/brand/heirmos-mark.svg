@@ -1,0 +1,23 @@
+<svg viewBox="100 71 311 370" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Heirmos">
+  <title>Heirmos</title>
+  <!-- Tight-cropped line-built H mark for inline UI (header/login). Cropped from
+       heirmos-icon.svg to the content bbox so it fills its box at small sizes;
+       the decorative drop-shadow is dropped (invisible at 24-48px). The gradient
+       uses gradientUnits="userSpaceOnUse" (absolute coords), so the crop is safe. -->
+  <defs>
+    <linearGradient id="heirmosLine" x1="128" y1="104" x2="386" y2="408" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8F6BFF"/>
+      <stop offset="0.24" stop-color="#0B2454"/>
+      <stop offset="0.66" stop-color="#071A3D"/>
+      <stop offset="1" stop-color="#48D7FF"/>
+    </linearGradient>
+  </defs>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 108 C132 160 132 207 150 256 C168 305 168 352 150 404" stroke="url(#heirmosLine)" stroke-width="54"/>
+    <path d="M362 108 C380 160 380 207 362 256 C344 305 344 352 362 404" stroke="url(#heirmosLine)" stroke-width="54"/>
+    <path d="M150 256 C195 221 236 224 258 256 C285 295 325 292 362 256" stroke="url(#heirmosLine)" stroke-width="54"/>
+    <circle cx="150" cy="108" r="18" fill="#8F6BFF" stroke="#FFFFFF" stroke-width="7"/>
+    <circle cx="258" cy="256" r="15.5" fill="#6EA8FF" stroke="#FFFFFF" stroke-width="7"/>
+    <circle cx="362" cy="404" r="18" fill="#48D7FF" stroke="#FFFFFF" stroke-width="7"/>
+  </g>
+</svg>
