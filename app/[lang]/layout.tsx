@@ -4,11 +4,12 @@ import { notFound } from "next/navigation";
 import Script from "next/script";
 import "../globals.css";
 
-// Microsoft Clarity — LANDING ONLY. Never on the logged-in dashboard
-// (session replay would record private memory content = SPEC §7 violation).
-// This marketing site has no auth/memory content, so it's safe here.
-// Production-gated so preview/dev traffic doesn't pollute analytics.
+// Analytics — LANDING ONLY (public marketing site, no auth/memory content).
+// Clarity (session replay) must NEVER touch the logged-in dashboard (§7: it would
+// record private memory content). GA4 here uses standard pageviews — safe because
+// landing URLs carry no memory data. Both production-gated (no preview/dev noise).
 const CLARITY_PROJECT_ID = "x7svjf45dv";
+const GA4_MEASUREMENT_ID = "G-CLMTJQ232S";
 import {
   defaultLocale,
   getDictionary,
@@ -106,9 +107,15 @@ export default async function LangLayout({
       <body className="min-h-full">
         {children}
         {process.env.VERCEL_ENV === "production" ? (
-          <Script id="ms-clarity" strategy="afterInteractive">
-            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`}
-          </Script>
+          <>
+            <Script id="ms-clarity" strategy="afterInteractive">
+              {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`}
+            </Script>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`} strategy="afterInteractive" />
+            <Script id="ga4" strategy="afterInteractive">
+              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4_MEASUREMENT_ID}');`}
+            </Script>
+          </>
         ) : null}
       </body>
     </html>
