@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import "../globals.css";
+
+// Microsoft Clarity — LANDING ONLY. Never on the logged-in dashboard
+// (session replay would record private memory content = SPEC §7 violation).
+// This marketing site has no auth/memory content, so it's safe here.
+// Production-gated so preview/dev traffic doesn't pollute analytics.
+const CLARITY_PROJECT_ID = "x7svjf45dv";
 import {
   defaultLocale,
   getDictionary,
@@ -96,7 +103,14 @@ export default async function LangLayout({
       lang={t.htmlLang}
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        {process.env.VERCEL_ENV === "production" ? (
+          <Script id="ms-clarity" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`}
+          </Script>
+        ) : null}
+      </body>
     </html>
   );
 }
