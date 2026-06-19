@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
-import Script from "next/script";
+import { CookieConsent } from "@/components/CookieConsent";
 import "../globals.css";
 
 // Analytics — LANDING ONLY (public marketing site, no auth/memory content).
@@ -106,17 +106,13 @@ export default async function LangLayout({
     >
       <body className="min-h-full">
         {children}
-        {process.env.VERCEL_ENV === "production" ? (
-          <>
-            <Script id="ms-clarity" strategy="afterInteractive">
-              {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`}
-            </Script>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`} strategy="afterInteractive" />
-            <Script id="ga4" strategy="afterInteractive">
-              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4_MEASUREMENT_ID}');`}
-            </Script>
-          </>
-        ) : null}
+        {/* Analytics load ONLY after cookie consent (GDPR opt-in); prod only. */}
+        <CookieConsent
+          enabled={process.env.VERCEL_ENV === "production"}
+          dict={t.cookie}
+          clarityId={CLARITY_PROJECT_ID}
+          gaId={GA4_MEASUREMENT_ID}
+        />
       </body>
     </html>
   );

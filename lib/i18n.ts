@@ -66,6 +66,11 @@ export type Dictionary = {
     contact: string;
     smitheryAria: string;
   };
+  cookie: {
+    text: string;
+    accept: string;
+    decline: string;
+  };
 };
 
 const ko: Dictionary = {
@@ -170,6 +175,11 @@ const ko: Dictionary = {
     contact: "문의",
     smitheryAria: "Smithery 에서 Heirmos MCP 보기",
   },
+  cookie: {
+    text: "서비스 개선을 위해 분석 쿠키(Google Analytics · Microsoft Clarity)를 사용합니다. 동의하시겠어요?",
+    accept: "동의",
+    decline: "거부",
+  },
 };
 
 const en: Dictionary = {
@@ -273,6 +283,11 @@ const en: Dictionary = {
     guide: "Guide",
     contact: "Contact",
     smitheryAria: "View Heirmos MCP on Smithery",
+  },
+  cookie: {
+    text: "We use analytics cookies (Google Analytics · Microsoft Clarity) to improve the service. Do you consent?",
+    accept: "Accept",
+    decline: "Decline",
   },
 };
 
