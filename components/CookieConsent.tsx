@@ -31,8 +31,13 @@ export function CookieConsent({
       const s = window.localStorage.getItem(KEY);
       if (s === "granted" || s === "denied") v = s;
     } catch {}
-    setConsent(v);
-    setReady(true);
+    // defer out of the effect body (lint: no sync setState in effect; also avoids
+    // an SSR/first-paint flash before the stored choice is read)
+    const id = window.setTimeout(() => {
+      setConsent(v);
+      setReady(true);
+    }, 0);
+    return () => window.clearTimeout(id);
   }, []);
 
   if (!enabled || !ready) return null;
