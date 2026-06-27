@@ -1,25 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Pretendard leads for Korean readability; Geist kept as the Latin fallback.
+     JetBrains Mono is used for kickers, step numbers and the © line.
+     Fonts are self-hosted via next/font in app/[lang]/layout.tsx, so the theme
+     tokens point at the generated CSS variables. */
+  --font-sans: var(--font-pretendard), var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
 
-  /* Brand — "Line-built H". Navy base, blue accent. */
+  /* ── Memory Spectrum ──────────────────────────────────────────────
+     Derived from the line-built "H" logo gradient (violet → blue → cyan).
+     Use these instead of ad-hoc hexes; they also generate Tailwind color
+     utilities (e.g. text-cyan, bg-violet/10, border-blue/20). */
+  --color-ink: #05060f;          /* page base (deep space) */
+  --color-ink-2: #090b18;        /* secondary surface */
+  --color-star: #eaefff;         /* headline / near-white */
+  --color-mist: #9aa6c8;         /* body text */
+  --color-mist-dim: #6e7693;     /* tertiary / captions */
+  --color-violet: #8b6bff;       /* spectrum start */
+  --color-blue: #5b8def;         /* spectrum mid / primary accent */
+  --color-cyan: #48d7ff;         /* spectrum end */
+
+  /* Back-compat with the previous landing tokens (still referenced anywhere) */
   --color-brand: #071a3d;
   --color-brand-2: #1e3a6d;
   --color-brand-accent: #5b8def;
 
-  --animate-fade-up: fade-up 0.6s ease-out both;
-
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   @keyframes fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 }
 
@@ -29,21 +39,22 @@ html {
 }
 
 body {
-  /* deep navy canvas with a soft radial glow toward the top */
-  background-color: #050b1a;
-  color: #e8edf6;
+  /* deep navy/ink canvas with two soft spectrum glows toward the top */
+  background-color: var(--color-ink);
+  color: var(--color-star);
   background-image:
-    radial-gradient(60rem 40rem at 50% -10rem, rgba(91, 141, 239, 0.18), transparent 70%),
-    radial-gradient(40rem 30rem at 90% 10%, rgba(30, 58, 109, 0.25), transparent 65%);
+    radial-gradient(60rem 40rem at 50% -12rem, rgba(91, 141, 239, 0.16), transparent 70%),
+    radial-gradient(46rem 32rem at 88% 6%, rgba(139, 107, 255, 0.12), transparent 65%);
   background-attachment: fixed;
 }
 
-/* respect reduced-motion */
+::selection {
+  background: rgba(91, 141, 239, 0.32);
+  color: #fff;
+}
+
+/* respect reduced-motion (the canvas also self-disables drift/twinkle/pulse) */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  * {
-    animation: none !important;
-  }
+  html { scroll-behavior: auto; }
+  * { animation: none !important; }
 }

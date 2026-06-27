@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { CookieConsent } from "@/components/CookieConsent";
 import "../globals.css";
@@ -26,6 +27,22 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// JetBrains Mono — kickers, step numbers, the © line (build-time self-hosted).
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+// Pretendard Variable — Korean-first display/body. Self-hosted (no third-party
+// runtime request, GDPR-clean). The constellation canvas reads --font-pretendard.
+const pretendard = localFont({
+  src: "../fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  display: "swap",
+  weight: "45 920",
 });
 
 const SITE = "https://heirmos.com";
@@ -102,7 +119,7 @@ export default async function LangLayout({
   return (
     <html
       lang={t.htmlLang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      className={`${pretendard.variable} ${geistSans.variable} ${geistMono.variable} ${jetbrainsMono.variable} h-full`}
     >
       <body className="min-h-full">
         {children}

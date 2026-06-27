@@ -6,7 +6,6 @@ import {
   Network,
   Plug,
   Search,
-  Sparkles,
 } from "lucide-react";
 import { notFound } from "next/navigation";
 import {
@@ -15,11 +14,13 @@ import {
   isLocale,
   type Locale,
 } from "../../lib/i18n";
+import { HeroConstellation } from "@/components/HeroConstellation";
 
 const DASHBOARD_URL = "https://dashboard.heirmos.com";
 const GUIDE_URL = "https://dashboard.heirmos.com/guide";
 const CONTACT_EMAIL = "team.pneumora@gmail.com";
 
+// Labels drawn on the constellation canvas (one node per AI).
 const AIS = ["Claude", "ChatGPT", "Grok", "Gemini", "Codex"];
 
 // Feature/step copy lives in the dictionary; icons are matched here by key.
@@ -34,14 +35,14 @@ const FEATURE_ICONS = {
 
 function Logo({ className = "" }: { className?: string }) {
   return (
-    <span className={`flex items-center gap-2 ${className}`}>
+    <span className={`flex items-center gap-2.5 ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/brand/heirmos-mark-dark.svg"
         alt=""
-        className="h-7 w-auto"
-        width={28}
-        height={28}
+        className="h-[26px] w-auto"
+        width={26}
+        height={31}
       />
       <span className="text-lg font-bold tracking-tight text-white">Heirmos</span>
     </span>
@@ -58,11 +59,11 @@ function CtaButton({
   variant?: "primary" | "ghost";
 }) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all";
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3.5 text-[15px] transition-all";
   const styles =
     variant === "primary"
-      ? "bg-[var(--color-brand-accent)] text-[#04122e] shadow-lg shadow-[var(--color-brand-accent)]/20 hover:brightness-110 hover:shadow-[var(--color-brand-accent)]/30"
-      : "border border-white/15 text-zinc-200 hover:bg-white/5";
+      ? "font-semibold text-[#05060f] bg-gradient-to-r from-[#7FB0FF] to-[#5B8DEF] shadow-[0_10px_34px_-10px_rgba(91,141,239,0.7)] hover:brightness-110"
+      : "font-medium text-[#D6DEF5] border border-white/15 bg-white/[0.03] hover:bg-white/[0.06]";
   return (
     <a href={href} className={`${base} ${styles}`}>
       {children}
@@ -100,15 +101,21 @@ function LangSwitch({
             hrefLang={code}
             aria-current={active ? "true" : undefined}
             className={`rounded-full px-2.5 py-1 font-medium transition-colors ${
-              active
-                ? "bg-white/15 text-white"
-                : "text-zinc-400 hover:text-white"
+              active ? "bg-white/15 text-white" : "text-zinc-400 hover:text-white"
             }`}
           >
             {text}
           </a>
         );
       })}
+    </div>
+  );
+}
+
+function Kicker({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-4 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#6E8BFF]">
+      {children}
     </div>
   );
 }
@@ -124,12 +131,12 @@ export default async function Home({
   const t = getDictionary(locale);
 
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       {/* ── Nav ───────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-20 border-b border-white/5 bg-[#050b1a]/70 backdrop-blur-md">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#05060f]/55 backdrop-blur-md">
+        <nav className="mx-auto flex max-w-[1160px] items-center justify-between px-6 py-4">
           <Logo />
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2.5">
             <LangSwitch
               locale={locale}
               label={t.langSwitch.label}
@@ -138,13 +145,13 @@ export default async function Home({
             />
             <a
               href={GUIDE_URL}
-              className="hidden rounded-full px-4 py-2 text-sm text-zinc-300 hover:text-white sm:inline-block"
+              className="hidden whitespace-nowrap px-3.5 py-2 text-sm text-[#9AA6C8] hover:text-white sm:inline-block"
             >
               {t.nav.guide}
             </a>
             <a
               href={DASHBOARD_URL}
-              className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/15"
+              className="whitespace-nowrap rounded-full border border-white/[0.07] bg-white/[0.08] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/[0.14]"
             >
               {t.nav.dashboard}
             </a>
@@ -153,108 +160,119 @@ export default async function Home({
       </header>
 
       <main className="flex-1">
-        {/* ── Hero ────────────────────────────────────────────── */}
-        <section className="mx-auto max-w-6xl px-5 pt-20 pb-16 text-center md:pt-28 md:pb-24">
-          <p className="animate-fade-up mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-zinc-300">
-            <Sparkles className="h-3.5 w-3.5 text-[var(--color-brand-accent)]" />
-            {t.hero.badge}
-          </p>
-          <h1 className="animate-fade-up text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white md:text-7xl">
-            {t.hero.titleLine1}
-            <br />
-            <span className="bg-gradient-to-r from-[var(--color-brand-accent)] via-sky-300 to-indigo-300 bg-clip-text text-transparent">
-              {t.hero.titleAccent}
+        {/* ── Hero: living memory constellation ───────────────── */}
+        <section className="relative">
+          <HeroConstellation ais={AIS} className="absolute inset-0 z-0" />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-[1]"
+            style={{
+              background:
+                "radial-gradient(120% 80% at 50% 8%, rgba(5,6,15,0) 38%, rgba(5,6,15,0.55) 100%), linear-gradient(180deg, rgba(5,6,15,0.4) 0%, rgba(5,6,15,0) 22%)",
+            }}
+          />
+          <div className="relative z-[2] mx-auto max-w-[880px] px-6 pt-28 pb-[340px] text-center md:pt-32 md:pb-[380px]">
+            <span className="mb-7 inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-[#8B6BFF]/30 bg-[#8B6BFF]/10 px-4 py-1.5 text-[12.5px] font-medium text-[#C9BEFF]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#8B6BFF] shadow-[0_0_10px_1px_#8B6BFF]" />
+              {t.hero.badge}
             </span>
-          </h1>
-          <p className="animate-fade-up mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-zinc-300 md:text-lg">
-            {t.hero.subtitle}
-          </p>
-          <div className="animate-fade-up mt-9 flex flex-wrap items-center justify-center gap-3">
-            <CtaButton href={DASHBOARD_URL} variant="primary">
-              {t.hero.ctaPrimary}
-              <ArrowRight className="h-4 w-4" />
-            </CtaButton>
-            <CtaButton href="#how" variant="ghost">
-              {t.hero.ctaGhost}
-            </CtaButton>
-          </div>
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-zinc-500">
-            <span className="text-xs uppercase tracking-wider text-zinc-600">
-              {t.hero.worksWith}
-            </span>
-            {AIS.map((ai) => (
-              <span key={ai} className="font-medium text-zinc-400">
-                {ai}
+            <h1 className="text-balance text-[clamp(40px,7vw,78px)] font-extrabold leading-[1.04] tracking-[-0.035em] text-white">
+              {t.hero.titleLine1}
+              <br />
+              <span className="bg-gradient-to-r from-[#8B6BFF] via-[#5B8DEF] to-[#48D7FF] bg-clip-text text-transparent">
+                {t.hero.titleAccent}
               </span>
-            ))}
+            </h1>
+            <p className="mx-auto mt-6 max-w-[620px] text-pretty text-[clamp(16px,1.7vw,19px)] leading-relaxed text-[#9AA6C8]">
+              {t.hero.subtitle}
+            </p>
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+              <CtaButton href={DASHBOARD_URL} variant="primary">
+                {t.hero.ctaPrimary}
+                <ArrowRight className="h-4 w-4" />
+              </CtaButton>
+              <CtaButton href="#how" variant="ghost">
+                {t.hero.ctaGhost}
+              </CtaButton>
+            </div>
           </div>
         </section>
 
         {/* ── Problem ─────────────────────────────────────────── */}
-        <section className="border-y border-white/5 bg-white/[0.02]">
-          <div className="mx-auto max-w-3xl px-5 py-20 text-center md:py-24">
-            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
+        <section className="border-t border-white/[0.06]">
+          <div className="mx-auto max-w-[760px] px-6 py-28 text-center">
+            <Kicker>{t.problem.kicker}</Kicker>
+            <h2 className="text-balance text-[clamp(27px,4vw,42px)] font-bold leading-[1.2] tracking-[-0.025em] text-[#EAEFFF]">
               {t.problem.title}
             </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-pretty leading-relaxed text-zinc-400">
+            <p className="mx-auto mt-5 max-w-[600px] text-pretty text-[17px] leading-[1.72] text-[#8A95B5]">
               {t.problem.body}
             </p>
           </div>
         </section>
 
         {/* ── Solution + Features ─────────────────────────────── */}
-        <section className="mx-auto max-w-6xl px-5 py-20 md:py-28">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-              {t.solution.title}
-            </h2>
-            <p className="mt-5 text-pretty leading-relaxed text-zinc-400">
-              {t.solution.body}
-            </p>
-          </div>
+        <section className="border-t border-white/[0.06] bg-gradient-to-b from-[#8FB4FF]/[0.022] to-transparent">
+          <div className="mx-auto max-w-[1160px] px-6 py-26 md:py-28">
+            <div className="mx-auto max-w-[660px] text-center">
+              <Kicker>{t.solution.kicker}</Kicker>
+              <h2 className="text-balance text-[clamp(27px,4vw,42px)] font-bold leading-[1.2] tracking-[-0.025em] text-white">
+                {t.solution.title}
+              </h2>
+              <p className="mx-auto mt-5 max-w-[520px] text-[17px] leading-relaxed text-[#8A95B5]">
+                {t.solution.body}
+              </p>
+            </div>
 
-          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {t.features.map(({ key, title, body }) => {
-              const Icon = FEATURE_ICONS[key as keyof typeof FEATURE_ICONS];
-              return (
-                <div
-                  key={key}
-                  className="group rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-white/20 hover:bg-white/[0.05]"
-                >
-                  <div className="mb-4 inline-flex rounded-xl bg-[var(--color-brand-accent)]/10 p-3 text-[var(--color-brand-accent)] ring-1 ring-inset ring-[var(--color-brand-accent)]/20">
-                    <Icon className="h-5 w-5" />
+            <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {t.features.map(({ key, title, body }) => {
+                const Icon = FEATURE_ICONS[key as keyof typeof FEATURE_ICONS];
+                return (
+                  <div
+                    key={key}
+                    className="group rounded-2xl border border-white/[0.07] bg-white/[0.02] p-7 transition-all hover:-translate-y-0.5 hover:border-[#8FB4FF]/30 hover:bg-[#8FB4FF]/[0.045]"
+                  >
+                    <div className="mb-4 inline-flex rounded-xl border border-[#5B8DEF]/20 bg-[#5B8DEF]/10 p-3 text-[#9FC0FF]">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-[#EAEFFF]">
+                      {title}
+                    </h3>
+                    <p className="mt-2.5 text-sm leading-[1.64] text-[#828DAD]">
+                      {body}
+                    </p>
                   </div>
-                  <h3 className="text-lg font-semibold text-white">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                    {body}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </section>
 
         {/* ── How it works ────────────────────────────────────── */}
-        <section id="how" className="border-y border-white/5 bg-white/[0.02]">
-          <div className="mx-auto max-w-6xl px-5 py-20 md:py-28">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
+        <section id="how" className="border-t border-white/[0.06]">
+          <div className="mx-auto max-w-[1000px] px-6 py-26 md:py-28">
+            <div className="mx-auto max-w-[600px] text-center">
+              <Kicker>{t.how.kicker}</Kicker>
+              <h2 className="text-balance text-[clamp(27px,4vw,42px)] font-bold leading-[1.2] tracking-[-0.025em] text-white">
                 {t.how.title}
               </h2>
-              <p className="mt-5 text-pretty leading-relaxed text-zinc-400">
+              <p className="mx-auto mt-5 max-w-[480px] text-[17px] leading-relaxed text-[#8A95B5]">
                 {t.how.body}
               </p>
             </div>
-            <div className="mt-14 grid gap-6 md:grid-cols-3">
+            <div className="mt-15 grid gap-8 md:grid-cols-3">
               {t.how.steps.map(({ n, title, body }) => (
-                <div key={n} className="relative">
-                  <div className="font-mono text-5xl font-bold text-white/10">
+                <div key={n}>
+                  <div
+                    className="font-mono text-5xl font-semibold text-transparent"
+                    style={{ WebkitTextStroke: "1px rgba(143,180,255,0.4)" }}
+                  >
                     {n}
                   </div>
-                  <h3 className="mt-3 text-xl font-semibold text-white">
+                  <h3 className="mt-4 text-[19px] font-semibold tracking-[-0.01em] text-[#EAEFFF]">
                     {title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                  <p className="mt-2.5 text-[14.5px] leading-[1.66] text-[#828DAD]">
                     {body}
                   </p>
                 </div>
@@ -264,14 +282,19 @@ export default async function Home({
         </section>
 
         {/* ── Final CTA ───────────────────────────────────────── */}
-        <section className="mx-auto max-w-6xl px-5 py-24 md:py-32">
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[var(--color-brand-2)]/40 to-[var(--color-brand)]/20 px-6 py-16 text-center md:py-20">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(30rem_20rem_at_50%_-5rem,rgba(91,141,239,0.25),transparent_70%)]" />
-            <div className="relative">
-              <h2 className="text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
+        <section className="border-t border-white/[0.06]">
+          <div className="mx-auto max-w-[1000px] px-6 pb-26 pt-22 md:pb-28">
+            <div
+              className="relative overflow-hidden rounded-[28px] border border-[#8B6BFF]/20 px-8 py-[76px] text-center"
+              style={{
+                background:
+                  "radial-gradient(120% 150% at 50% -25%, rgba(91,141,239,0.24), rgba(139,107,255,0.07) 48%, rgba(5,6,15,0) 78%), rgba(255,255,255,0.018)",
+              }}
+            >
+              <h2 className="mx-auto max-w-[640px] text-balance text-[clamp(29px,4.6vw,50px)] font-bold leading-[1.12] tracking-[-0.03em] text-white">
                 {t.finalCta.title}
               </h2>
-              <p className="mx-auto mt-5 max-w-xl text-pretty leading-relaxed text-zinc-300">
+              <p className="mx-auto mt-5 max-w-[480px] text-[17px] leading-relaxed text-[#A6B0CE]">
                 {t.finalCta.body}
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
@@ -283,11 +306,11 @@ export default async function Home({
                   {t.finalCta.ctaGhost}
                 </CtaButton>
               </div>
-              <p className="mt-6 text-sm text-zinc-400">
+              <p className="mt-6 text-[13.5px] text-[#6E7693]">
                 {t.finalCta.contactPre}
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
-                  className="font-medium text-[var(--color-brand-accent)] hover:underline"
+                  className="text-[#9FC0FF] underline decoration-[#9FC0FF]/35 underline-offset-2 hover:decoration-[#9FC0FF]"
                 >
                   {CONTACT_EMAIL}
                 </a>
@@ -299,10 +322,10 @@ export default async function Home({
       </main>
 
       {/* ── Footer ──────────────────────────────────────────── */}
-      <footer className="border-t border-white/5">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-10 sm:flex-row">
+      <footer className="border-t border-white/[0.06]">
+        <div className="mx-auto flex max-w-[1160px] flex-col items-center justify-between gap-4 px-6 py-9 sm:flex-row">
           <Logo />
-          <div className="flex items-center gap-6 text-sm text-zinc-400">
+          <div className="flex items-center gap-6 text-sm text-[#828DAD]">
             <a href={DASHBOARD_URL} className="hover:text-white">
               {t.footer.dashboard}
             </a>
@@ -312,22 +335,8 @@ export default async function Home({
             <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white">
               {t.footer.contact}
             </a>
-            <a
-              href="https://smithery.ai/servers/heirmos/memory"
-              target="_blank"
-              rel="noreferrer noopener"
-              aria-label={t.footer.smitheryAria}
-              className="hover:opacity-80"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://smithery.ai/badge/heirmos/memory"
-                alt="smithery badge"
-                className="h-5 w-auto"
-              />
-            </a>
           </div>
-          <p className="text-xs text-zinc-600">© 2026 Heirmos</p>
+          <p className="font-mono text-xs text-[#4F5670]">© 2026 Heirmos</p>
         </div>
       </footer>
     </div>

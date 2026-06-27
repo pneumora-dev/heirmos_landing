@@ -39,15 +39,18 @@ export type Dictionary = {
     worksWith: string;
   };
   problem: {
+    kicker: string;
     title: string;
     body: string;
   };
   solution: {
+    kicker: string;
     title: string;
     body: string;
   };
   features: Feature[];
   how: {
+    kicker: string;
     title: string;
     body: string;
     steps: Step[];
@@ -101,10 +104,12 @@ const ko: Dictionary = {
     worksWith: "함께 쓰는 AI",
   },
   problem: {
+    kicker: "왜 필요한가요",
     title: "AI는 매번 당신을 처음 만납니다",
     body: "대화창을 닫으면 컨텍스트가 사라지고, 새 창에서는 또 처음부터 설명해야 합니다. ChatGPT에 알려준 걸 Claude는 모르고, 어제의 결정을 오늘의 AI는 기억하지 못합니다. 당신의 맥락이 도구마다 흩어집니다.",
   },
   solution: {
+    kicker: "해결책",
     title: "한 번 저장하면, 모든 AI가 기억합니다",
     body: "Heirmos는 AI들이 공유하는 클라우드 메모리입니다. 저장은 한 곳에, 접근은 어디서나.",
   },
@@ -141,6 +146,7 @@ const ko: Dictionary = {
     },
   ],
   how: {
+    kicker: "시작하기",
     title: "3단계면 충분합니다",
     body: "설치도, 코드도 필요 없습니다. 쓰던 AI에 연결만 하세요.",
     steps: [
@@ -210,10 +216,12 @@ const en: Dictionary = {
     worksWith: "Works with",
   },
   problem: {
+    kicker: "Why it matters",
     title: "AI meets you for the first time, every time",
     body: "Close the chat and the context is gone; in a new window you explain everything from scratch. What you told ChatGPT, Claude doesn't know — and today's AI can't recall yesterday's decision. Your context scatters across every tool.",
   },
   solution: {
+    kicker: "The fix",
     title: "Save once, every AI remembers",
     body: "Heirmos is cloud memory shared across AIs. Saved in one place, accessible everywhere.",
   },
@@ -250,6 +258,7 @@ const en: Dictionary = {
     },
   ],
   how: {
+    kicker: "Get going",
     title: "Three steps is all it takes",
     body: "No installs, no code. Just connect the AI you already use.",
     steps: [
