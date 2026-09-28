@@ -133,6 +133,25 @@ export default async function Home({
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       {/* ── Nav ───────────────────────────────────────────────── */}
+      {/* Maintenance-mode notice (2026-09-28 mothball). Plain server markup, no
+          state: it must render on every visit, not be dismissable. */}
+      <div
+        role="status"
+        className="border-b border-amber-300/20 bg-amber-300/[0.08] text-[13px] leading-relaxed text-[#eaefff]"
+      >
+        <p className="mx-auto flex max-w-[1160px] flex-wrap items-center gap-x-2 gap-y-1 px-6 py-2.5">
+          <span className="rounded-full border border-amber-300/30 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-amber-200">
+            {t.notice.label}
+          </span>
+          <span className="text-[#c9d1ea]">{t.notice.text}</span>
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="underline decoration-white/30 underline-offset-4 hover:text-white"
+          >
+            {t.notice.contact}: {CONTACT_EMAIL}
+          </a>
+        </p>
+      </div>
       <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#05060f]/55 backdrop-blur-md">
         <nav className="mx-auto flex max-w-[1160px] items-center justify-between px-6 py-4">
           <Logo />

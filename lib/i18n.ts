@@ -74,6 +74,11 @@ export type Dictionary = {
     accept: string;
     decline: string;
   };
+  notice: {
+    label: string;
+    text: string;
+    contact: string;
+  };
 };
 
 const ko: Dictionary = {
@@ -186,6 +191,11 @@ const ko: Dictionary = {
     accept: "동의",
     decline: "거부",
   },
+  notice: {
+    label: "유지 모드",
+    text: "Heirmos는 2026년 9월부터 유지 모드입니다. 기존 계정·저장된 기억·AI 연결은 계속 동작하지만 신규 기능 개발과 온보딩 지원은 중단됩니다.",
+    contact: "문의",
+  },
 };
 
 const en: Dictionary = {
@@ -297,6 +307,11 @@ const en: Dictionary = {
     text: "We use analytics cookies (Google Analytics · Microsoft Clarity) to improve the service. Do you consent?",
     accept: "Accept",
     decline: "Decline",
+  },
+  notice: {
+    label: "Maintenance mode",
+    text: "Heirmos has been in maintenance mode since September 2026. Existing accounts, saved memories and AI connections keep working, but new feature development and onboarding support are paused.",
+    contact: "Contact",
   },
 };
 
