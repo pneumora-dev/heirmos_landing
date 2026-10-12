@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
+import { Analytics } from "@vercel/analytics/next";
 import { CookieConsent } from "@/components/CookieConsent";
 import "../globals.css";
 
@@ -9,6 +10,9 @@ import "../globals.css";
 // Clarity (session replay) must NEVER touch the logged-in dashboard (§7: it would
 // record private memory content). GA4 here uses standard pageviews — safe because
 // landing URLs carry no memory data. Both production-gated (no preview/dev noise).
+// Both are also consent-gated (CookieConsent), so they see only visitors who
+// accept — Vercel Web Analytics (cookieless, no personal data) runs regardless
+// and is the one source that counts every visit + referrer (2026-10-12).
 const CLARITY_PROJECT_ID = "x7svjf45dv";
 const GA4_MEASUREMENT_ID = "G-CLMTJQ232S";
 import {
@@ -45,7 +49,15 @@ const pretendard = localFont({
   weight: "45 920",
 });
 
-const SITE = "https://heirmos.com";
+// Canonical host. The apex 308-redirects to www (Vercel domain config), so every
+// canonical / hreflang / og:url must name www — otherwise crawlers see a canonical
+// that itself redirects (observed live 2026-10-12).
+const SITE = "https://www.heirmos.com";
+
+// Search Console / Naver Search Advisor ownership tokens — set in the Vercel
+// project env; the tags are emitted only when present.
+const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+const NAVER_SITE_VERIFICATION = process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION;
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -96,11 +108,18 @@ export async function generateMetadata({
       siteName: "Heirmos",
       locale: t.ogLocale,
       type: "website",
+      images: [{ url: `/brand/og-${locale}.png`, width: 1200, height: 630, alt: t.meta.title }],
     },
     twitter: {
       card: "summary_large_image",
       title: t.meta.title,
       description: t.meta.description,
+      images: [`/brand/og-${locale}.png`],
+    },
+    robots: { index: true, follow: true },
+    verification: {
+      google: GOOGLE_SITE_VERIFICATION,
+      other: NAVER_SITE_VERIFICATION ? { "naver-site-verification": NAVER_SITE_VERIFICATION } : undefined,
     },
   };
 }
@@ -130,6 +149,8 @@ export default async function LangLayout({
           clarityId={CLARITY_PROJECT_ID}
           gaId={GA4_MEASUREMENT_ID}
         />
+        {/* Cookieless visit + referrer counts (sends only in production builds). */}
+        <Analytics />
       </body>
     </html>
   );

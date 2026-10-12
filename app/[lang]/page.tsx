@@ -12,10 +12,12 @@ import {
   defaultLocale,
   getDictionary,
   isLocale,
+  locales,
   type Locale,
 } from "../../lib/i18n";
 import { HeroConstellation } from "@/components/HeroConstellation";
 
+const SITE = "https://www.heirmos.com";
 const DASHBOARD_URL = "https://dashboard.heirmos.com";
 const GUIDE_URL = "https://dashboard.heirmos.com/guide";
 const CONTACT_EMAIL = "team.pneumora@gmail.com";
@@ -130,8 +132,52 @@ export default async function Home({
   const locale: Locale = isLocale(lang) ? lang : defaultLocale;
   const t = getDictionary(locale);
 
+  // Structured data (schema.org) — what the product is, in machine-readable form,
+  // for search engines and answer engines. Copy comes from the same dictionary as
+  // the visible page so the two cannot drift. No ratings/reviews: none exist.
+  const organization = {
+    "@type": "Organization",
+    "@id": `${SITE}/#org`,
+    name: "Pneumora",
+    url: SITE,
+    email: CONTACT_EMAIL,
+    logo: `${SITE}/brand/heirmos-icon-512.png`,
+  };
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      organization,
+      {
+        "@type": "SoftwareApplication",
+        name: "Heirmos",
+        url: `${SITE}/${locale}`,
+        inLanguage: locale,
+        description: t.meta.description,
+        applicationCategory: "ProductivityApplication",
+        operatingSystem: "Web",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        featureList: t.features.map((f) => f.title),
+        publisher: { "@id": organization["@id"] },
+        installUrl: DASHBOARD_URL,
+        softwareHelp: { "@type": "CreativeWork", url: GUIDE_URL },
+      },
+      {
+        "@type": "WebSite",
+        name: "Heirmos",
+        url: SITE,
+        inLanguage: locales,
+        publisher: { "@id": organization["@id"] },
+      },
+    ],
+  };
+
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        // JSON.stringify output; `<` is escaped so the script cannot be closed early.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       {/* ── Nav ───────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#05060f]/55 backdrop-blur-md">
         <nav className="mx-auto flex max-w-[1160px] items-center justify-between px-6 py-4">

@@ -1,0 +1,34 @@
+# Heirmos
+
+> Heirmos is cloud memory shared across AI assistants (Claude, ChatGPT, Codex, Grok, Gemini). Save a memory once from any AI, recall it from every other one. It also works as a quick notepad your AI can read. Korean-first, free to use.
+> Heirmos 는 여러 AI(Claude · ChatGPT · Codex · Grok · Gemini)가 공유하는 클라우드 기억입니다. 어느 AI 에서든 한 번 저장하면 다른 AI 에서 그대로 꺼내 씁니다. AI 가 읽는 빠른 메모장으로도 쓸 수 있습니다. 한국어 우선, 무료.
+
+## What it does / 무엇을 하나
+
+- Connects to any AI that supports MCP (Model Context Protocol) or plain REST: Claude.ai uses OAuth, everything else uses one issued API key.
+- Memories are stored as a folder tree of markdown-like notes (one topic = one path such as `projects/x/y.md`). The AI files new memories automatically.
+- Hybrid search (embeddings + keywords, tuned for Korean), relationship suggestions between memories, versioning with soft delete, strict per-user isolation.
+- Quick memo (`/q`): a phone-style notepad that opens instantly and saves to the same memory the AIs read.
+- Import of ChatGPT / Claude conversation exports; coding-agent hooks (Claude Code, Codex, Cursor) that brief and capture memory automatically.
+- MCP 또는 REST 를 지원하는 어떤 AI 에나 연결됩니다. Claude.ai 는 OAuth, 나머지는 발급한 키 하나.
+- 기억은 폴더 트리(한 토픽 = 한 경로)로 저장되고 AI 가 알아서 분류합니다. 하이브리드 검색·관계 제안·버전 관리·사용자별 완전 격리.
+- 빠른 메모 `/q`: 홈 화면에서 바로 열리는 메모장. 여기 적은 것을 연결된 AI 가 읽습니다.
+
+## Endpoints
+
+- MCP server (Streamable HTTP): https://mcp.heirmos.com/mcp
+- REST API: https://api.heirmos.com (Bearer `hk_…` keys issued in the dashboard)
+- Dashboard / sign-up (Google login): https://dashboard.heirmos.com
+- Quick memo: https://dashboard.heirmos.com/q
+
+## Docs / 문서
+
+- [User guide (ko/en) / 이용 가이드](https://dashboard.heirmos.com/guide): connecting Claude.ai, ChatGPT, Codex, Grok, Cursor; keys; import; FAQ.
+- [Privacy policy](https://dashboard.heirmos.com/privacy)
+- [Terms of service](https://dashboard.heirmos.com/terms)
+- [Landing (ko)](https://www.heirmos.com/ko) · [Landing (en)](https://www.heirmos.com/en)
+- [Smithery listing (MCP registry)](https://smithery.ai/servers/heirmos/memory)
+
+## Operator
+
+- Pneumora (Seoul, Korea) · contact: team.pneumora@gmail.com · support: support@heirmos.com
