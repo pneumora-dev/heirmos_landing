@@ -1,11 +1,12 @@
 import {
   ArrowRight,
+  Download,
   FolderTree,
   History,
   Lock,
-  Network,
   Plug,
   Search,
+  Zap,
 } from "lucide-react";
 import { notFound } from "next/navigation";
 import {
@@ -13,6 +14,7 @@ import {
   getDictionary,
   isLocale,
   locales,
+  type Dictionary,
   type Locale,
 } from "../../lib/i18n";
 import { HeroConstellation } from "@/components/HeroConstellation";
@@ -27,13 +29,64 @@ const AIS = ["Claude", "ChatGPT", "Grok", "Gemini", "Codex"];
 
 // Feature/step copy lives in the dictionary; icons are matched here by key.
 const FEATURE_ICONS = {
+  instant: Zap,
   connect: Plug,
   folder: FolderTree,
-  search: Search,
-  graph: Network,
+  import: Download,
   version: History,
   isolation: Lock,
 } as const;
+
+/** The demo scene: a drawn `/q` phone screen next to an AI chat that answers
+ *  from that note. Pure markup (no screenshot) so it stays crisp, translatable,
+ *  and can never leak a real note — every string comes from the dictionary. */
+function DemoScene({ d }: { d: Dictionary["demo"] }) {
+  return (
+    <div className="mt-14 grid items-center gap-8 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)] md:gap-12">
+      {/* Phone — mirrors the real /q layout: header, open note, recent list */}
+      <div className="mx-auto w-full max-w-[320px] rounded-[42px] border border-white/10 bg-[#0b0e1c] p-3 shadow-[0_30px_80px_-30px_rgba(91,141,239,0.55)]">
+        <div className="overflow-hidden rounded-[32px] bg-white text-zinc-900">
+          <div className="flex items-center justify-between px-5 pt-5 pb-3">
+            <span className="text-[15px] font-semibold">{d.phoneTitle}</span>
+            <span className="flex items-center gap-1.5 text-[11.5px] text-emerald-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              {d.phoneSaved}
+            </span>
+          </div>
+          <div className="mx-4 min-h-[188px] whitespace-pre-line rounded-2xl bg-zinc-50 px-4 py-3.5 text-[14px] leading-[1.7] text-zinc-800">
+            {d.phoneNote}
+            <span className="ml-0.5 inline-block h-[17px] w-[1.5px] translate-y-[3px] animate-pulse bg-[#5B8DEF]" />
+          </div>
+          <div className="px-5 pt-5 pb-6">
+            <div className="text-[11.5px] font-medium text-zinc-400">{d.phoneRecent}</div>
+            <ul className="mt-2 divide-y divide-zinc-100">
+              {d.phoneRecentItems.map((it) => (
+                <li key={it.title} className="flex items-center justify-between py-2.5 text-[13px]">
+                  <span className="truncate text-zinc-700">{it.title}</span>
+                  <span className="ml-3 shrink-0 text-[11.5px] text-zinc-400">{it.when}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Chat — the AI answers from the note above */}
+      <div className="rounded-3xl border border-white/[0.08] bg-white/[0.025] p-6 md:p-8">
+        <div className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-[#5B8DEF] px-4 py-3 text-[15px] leading-relaxed text-white">
+          {d.chatUser}
+        </div>
+        <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#8B6BFF]/30 bg-[#8B6BFF]/10 px-3 py-1 text-[12px] text-[#C9BEFF]">
+          <Search className="h-3.5 w-3.5" />
+          {d.chatTool}
+        </div>
+        <div className="mt-3 max-w-[92%] rounded-2xl rounded-bl-md bg-white/[0.06] px-4 py-3 text-[15px] leading-[1.7] text-[#D6DEF5]">
+          {d.chatAi}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function Logo({ className = "" }: { className?: string }) {
   return (
@@ -237,10 +290,26 @@ export default async function Home({
                 {t.hero.ctaPrimary}
                 <ArrowRight className="h-4 w-4" />
               </CtaButton>
-              <CtaButton href="#how" variant="ghost">
+              <CtaButton href="#how-it-works" variant="ghost">
                 {t.hero.ctaGhost}
               </CtaButton>
             </div>
+          </div>
+        </section>
+
+        {/* ── Demo: write on the phone, the AI reads it ───────── */}
+        <section id="how-it-works" className="border-t border-white/[0.06]">
+          <div className="mx-auto max-w-[1000px] px-6 py-24 md:py-28">
+            <div className="mx-auto max-w-[620px] text-center">
+              <Kicker>{t.demo.kicker}</Kicker>
+              <h2 className="text-balance text-[clamp(27px,4vw,42px)] font-bold leading-[1.2] tracking-[-0.025em] text-white">
+                {t.demo.title}
+              </h2>
+              <p className="mx-auto mt-5 max-w-[520px] text-pretty text-[17px] leading-relaxed text-[#8A95B5]">
+                {t.demo.body}
+              </p>
+            </div>
+            <DemoScene d={t.demo} />
           </div>
         </section>
 

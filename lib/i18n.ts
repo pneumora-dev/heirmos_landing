@@ -38,6 +38,21 @@ export type Dictionary = {
     ctaGhost: string;
     worksWith: string;
   };
+  /** The "write on the phone, the AI reads it" scene under the hero. All
+   *  sample text is invented — never a real user's note. */
+  demo: {
+    kicker: string;
+    title: string;
+    body: string;
+    phoneTitle: string;
+    phoneNote: string;
+    phoneSaved: string;
+    phoneRecent: string;
+    phoneRecentItems: { title: string; when: string }[];
+    chatUser: string;
+    chatTool: string;
+    chatAi: string;
+  };
   problem: {
     kicker: string;
     title: string;
@@ -80,13 +95,13 @@ const ko: Dictionary = {
   htmlLang: "ko",
   ogLocale: "ko_KR",
   meta: {
-    title: "Heirmos — 하나의 기억, 모든 AI",
+    title: "Heirmos — AI가 읽는 빠른 메모장",
     description:
-      "Claude · ChatGPT · Grok · Gemini — 어떤 AI와 대화하든 당신이 쌓아온 기억을 그대로 이어가세요. Heirmos는 모든 AI가 공유하는 클라우드 기억 인프라입니다.",
+      "폰 홈 화면에서 바로 열리는 메모장. 적어둔 메모를 Claude · ChatGPT · Codex 가 그대로 읽고 답합니다. Google 로그인 한 번, 무료.",
   },
   nav: {
     guide: "이용 가이드",
-    dashboard: "대시보드",
+    dashboard: "로그인",
   },
   langSwitch: {
     label: "언어 선택",
@@ -94,89 +109,105 @@ const ko: Dictionary = {
     en: "English",
   },
   hero: {
-    badge: "AI를 위한 클라우드 기억 인프라",
-    titleLine1: "하나의 기억,",
-    titleAccent: "모든 AI",
+    badge: "AI가 읽는 빠른 메모장",
+    titleLine1: "적어두면,",
+    titleAccent: "AI가 기억합니다",
     subtitle:
-      "Claude · ChatGPT · Grok · Gemini — 어떤 AI와 대화하든, 당신이 쌓아온 기억을 그대로 이어갑니다. Heirmos는 AI들이 함께 쓰는 영구 기억입니다.",
-    ctaPrimary: "무료로 시작하기",
-    ctaGhost: "작동 방식 보기",
-    worksWith: "함께 쓰는 AI",
+      "폰 홈 화면에서 바로 열리는 메모장. 떠오른 생각을 적어두면 Claude · ChatGPT · Codex 가 그 메모를 읽고 답합니다. 더는 AI에게 처음부터 설명하지 마세요.",
+    ctaPrimary: "무료로 메모 시작하기",
+    ctaGhost: "어떻게 쓰나요",
+    worksWith: "메모를 읽는 AI",
+  },
+  demo: {
+    kicker: "이렇게 씁니다",
+    title: "폰에 적고, AI에게 물어보세요",
+    body: "메모장은 바로 열리고 오프라인에서도 적힙니다. 연결된 AI는 묻는 순간 당신의 메모를 찾아 읽습니다.",
+    phoneTitle: "빠른 메모",
+    phoneNote: "사이드 프로젝트 이름 후보\n- 담다\n- 한줄\n- 모아\n→ 짧고 동사형이 좋다. 도메인 확인하기",
+    phoneSaved: "저장됨",
+    phoneRecent: "최근 메모",
+    phoneRecentItems: [
+      { title: "다음 주 발표 구성 메모", when: "2시간 전" },
+      { title: "읽을 책 — 리스트 업데이트", when: "어제" },
+    ],
+    chatUser: "내가 적어둔 사이드 프로젝트 이름 후보 중에 하나 골라줘",
+    chatTool: "Heirmos 메모 검색 · 1건",
+    chatAi: "메모에 적으신 기준이 “짧고 동사형”이었죠. 그 기준이면 ‘담다’가 가장 잘 맞아요. 다음으로 적어두신 도메인 확인부터 해볼까요?",
   },
   problem: {
     kicker: "왜 필요한가요",
-    title: "AI는 매번 당신을 처음 만납니다",
-    body: "대화창을 닫으면 컨텍스트가 사라지고, 새 창에서는 또 처음부터 설명해야 합니다. ChatGPT에 알려준 걸 Claude는 모르고, 어제의 결정을 오늘의 AI는 기억하지 못합니다. 당신의 맥락이 도구마다 흩어집니다.",
+    title: "좋은 생각은 AI 앞에서 떠오르지 않습니다",
+    body: "아이디어는 길에서, 회의 중에, 자기 전에 옵니다. 메모 앱에 적으면 AI는 모르고, AI 채팅에 쓰면 대화창과 함께 묻힙니다. 그래서 매번 처음부터 다시 설명하게 됩니다.",
   },
   solution: {
-    kicker: "해결책",
-    title: "한 번 저장하면, 모든 AI가 기억합니다",
-    body: "Heirmos는 AI들이 공유하는 클라우드 메모리입니다. 저장은 한 곳에, 접근은 어디서나.",
+    kicker: "Heirmos",
+    title: "메모장과 AI 사이를 잇습니다",
+    body: "적는 건 메모장처럼 가볍게, 꺼내 쓰는 건 AI가 알아서.",
   },
   features: [
     {
+      key: "instant",
+      title: "바로 열리는 메모장",
+      body: "홈 화면 아이콘을 누르면 바로 입력창. 폰에 먼저 저장되니 지하철·비행기에서도 적히고, 연결되면 알아서 올라갑니다.",
+    },
+    {
       key: "connect",
-      title: "모든 AI에 연결",
-      body: "MCP + REST 표준으로 Claude.ai · ChatGPT · Codex · Grok 어디든 커넥터 하나면 붙습니다. 별도 플러그인 개발이 필요 없습니다.",
+      title: "모든 AI가 같은 메모를 읽음",
+      body: "Claude · ChatGPT · Codex · Grok 에 커넥터 한 번이면 끝. 어느 AI에서 물어도 같은 메모를 찾아 답합니다.",
     },
     {
       key: "folder",
-      title: "자동 폴더 분류",
-      body: "“이거 기억해줘” 한마디면 AI가 의미를 읽어 알맞은 폴더 경로로 정리합니다. 직접 분류하지 않아도 트리가 쌓입니다.",
+      title: "정리는 AI가",
+      body: "폴더를 고를 필요가 없습니다. 의미를 읽어 알맞은 자리에 두고, 한국어 검색도 정확하게 찾아냅니다.",
     },
     {
-      key: "search",
-      title: "하이브리드 검색",
-      body: "의미(임베딩)와 키워드를 함께 쓰는 검색에 중요도·최신성 재랭크까지. 한국어에 최적화되어 조사 경계도 잘 잡습니다.",
-    },
-    {
-      key: "graph",
-      title: "관계 그래프",
-      body: "기억을 저장하면 연관된 기억과의 관계(뒷받침·모순·세분화 등)를 자동으로 제안합니다. 지식이 점이 아니라 망으로 연결됩니다.",
+      key: "import",
+      title: "지난 대화도 메모로",
+      body: "ChatGPT · Claude 대화 내보내기 파일을 넣으면 오래 남길 사실과 결정만 골라 메모로 만들어 줍니다.",
     },
     {
       key: "version",
-      title: "무손실 · 버전관리",
-      body: "수정해도 이전 버전이 남고, 삭제는 보관(soft-delete)이라 언제든 복구됩니다. 기억을 잃을 걱정이 없습니다.",
+      title: "지워도 잃지 않음",
+      body: "수정하면 이전 버전이 남고, 삭제는 보관함으로 갑니다. 언제든 되살릴 수 있습니다.",
     },
     {
       key: "isolation",
-      title: "완전한 격리",
-      body: "모든 데이터는 사용자별로 분리됩니다. 내 기억은 나의 키로만 접근하고, 비밀·민감 정보는 저장 정책으로 보호합니다.",
+      title: "내 메모는 나만",
+      body: "모든 메모는 계정별로 완전히 분리됩니다. 비밀번호·카드번호 같은 민감 정보는 저장하지 않도록 막습니다.",
     },
   ],
   how: {
     kicker: "시작하기",
     title: "3단계면 충분합니다",
-    body: "설치도, 코드도 필요 없습니다. 쓰던 AI에 연결만 하세요.",
+    body: "설치도, 코드도 필요 없습니다.",
     steps: [
       {
         n: "01",
-        title: "연결",
-        body: "쓰는 AI에 Heirmos 커넥터를 추가합니다. Claude.ai는 OAuth 한 번, 나머지는 발급한 키 하나면 끝.",
+        title: "로그인하고 홈 화면에 추가",
+        body: "Google 로그인 한 번이면 메모장이 열립니다. 폰에서는 ‘홈 화면에 추가’로 앱처럼 쓰세요.",
       },
       {
         n: "02",
-        title: "저장",
-        body: "대화 중 “이거 기억해줘”라고만 하면 됩니다. AI가 핵심을 정리해 폴더에 저장합니다.",
+        title: "떠오르면 적기",
+        body: "제목도 폴더도 필요 없습니다. 한 줄이어도 괜찮아요.",
       },
       {
         n: "03",
-        title: "어디서든 꺼내쓰기",
-        body: "다른 AI로 옮겨가도 같은 기억을 그대로 불러옵니다. 매번 처음부터 설명할 필요가 없습니다.",
+        title: "AI에 연결하고 물어보기",
+        body: "쓰는 AI에 Heirmos 를 한 번 연결하면 “내 메모에서 찾아줘” 한마디로 꺼내 씁니다. Claude.ai 는 클릭 한 번.",
       },
     ],
   },
   finalCta: {
-    title: "AI에게 당신을 기억하게 하세요",
-    body: "지금 대시보드에서 키를 발급하고, 첫 기억을 저장해 보세요. 몇 분이면 됩니다.",
-    ctaPrimary: "무료로 시작하기",
-    ctaGhost: "이용 가이드",
+    title: "오늘 떠오른 생각부터 적어두세요",
+    body: "Google 로그인 한 번이면 바로 메모장이 열립니다. AI 연결은 나중에 해도 됩니다.",
+    ctaPrimary: "무료로 메모 시작하기",
+    ctaGhost: "AI 연결 가이드",
     contactPre: "궁금한 점이 있으신가요? ",
     contactPost: " 로 문의하세요.",
   },
   footer: {
-    dashboard: "대시보드",
+    dashboard: "로그인",
     guide: "이용 가이드",
     contact: "문의",
     smitheryAria: "Smithery 에서 Heirmos MCP 보기",
@@ -192,13 +223,13 @@ const en: Dictionary = {
   htmlLang: "en",
   ogLocale: "en_US",
   meta: {
-    title: "Heirmos — One memory, every AI",
+    title: "Heirmos — The quick notepad your AI reads",
     description:
-      "Claude · ChatGPT · Grok · Gemini — whichever AI you talk to, pick up right where your memory left off. Heirmos is cloud memory infrastructure shared by every AI.",
+      "A notepad that opens straight from your home screen. Claude, ChatGPT and Codex read what you jot down and answer with it. One Google sign-in, free.",
   },
   nav: {
     guide: "Guide",
-    dashboard: "Dashboard",
+    dashboard: "Sign in",
   },
   langSwitch: {
     label: "Choose language",
@@ -206,89 +237,105 @@ const en: Dictionary = {
     en: "English",
   },
   hero: {
-    badge: "Cloud memory infrastructure for AI",
-    titleLine1: "One memory,",
-    titleAccent: "every AI",
+    badge: "The quick notepad your AI reads",
+    titleLine1: "Jot it down,",
+    titleAccent: "your AI remembers",
     subtitle:
-      "Claude · ChatGPT · Grok · Gemini — whichever AI you talk to, pick up right where your memory left off. Heirmos is the permanent memory every AI shares.",
-    ctaPrimary: "Get started free",
-    ctaGhost: "See how it works",
-    worksWith: "Works with",
+      "A notepad that opens straight from your home screen. Write a thought down and Claude · ChatGPT · Codex read that note when you ask. Stop explaining everything from scratch.",
+    ctaPrimary: "Start writing — free",
+    ctaGhost: "How it works",
+    worksWith: "AIs that read your notes",
+  },
+  demo: {
+    kicker: "In practice",
+    title: "Write on your phone. Ask your AI.",
+    body: "The notepad opens instantly and works offline. A connected AI finds and reads your notes the moment you ask.",
+    phoneTitle: "Quick memo",
+    phoneNote: "Side project name ideas\n- Keep\n- Jot\n- Gather\n→ short + a verb works best. check domains",
+    phoneSaved: "Saved",
+    phoneRecent: "Recent notes",
+    phoneRecentItems: [
+      { title: "Outline for next week's talk", when: "2h ago" },
+      { title: "Books to read — updated list", when: "Yesterday" },
+    ],
+    chatUser: "Pick one of the side project names I wrote down",
+    chatTool: "Heirmos note search · 1 result",
+    chatAi: "Your note says you want something “short and a verb”. By that rule, ‘Keep’ fits best. Want to start on the domain check you noted next?",
   },
   problem: {
     kicker: "Why it matters",
-    title: "AI meets you for the first time, every time",
-    body: "Close the chat and the context is gone; in a new window you explain everything from scratch. What you told ChatGPT, Claude doesn't know — and today's AI can't recall yesterday's decision. Your context scatters across every tool.",
+    title: "Good ideas don't show up while you're chatting with an AI",
+    body: "They come on the street, in meetings, right before sleep. Put them in a notes app and your AI never sees them; put them in a chat and they sink with the thread. So you explain everything again, every time.",
   },
   solution: {
-    kicker: "The fix",
-    title: "Save once, every AI remembers",
-    body: "Heirmos is cloud memory shared across AIs. Saved in one place, accessible everywhere.",
+    kicker: "Heirmos",
+    title: "A bridge between your notes and your AI",
+    body: "Writing feels like a notepad. Recall is the AI's job.",
   },
   features: [
     {
+      key: "instant",
+      title: "Opens instantly",
+      body: "Tap the home-screen icon and you're typing. Notes save to your phone first, so they work on the subway or a plane and sync once you're back online.",
+    },
+    {
       key: "connect",
-      title: "Connect to every AI",
-      body: "With the MCP + REST standard, a single connector plugs into Claude.ai · ChatGPT · Codex · Grok — anywhere. No custom plugin development required.",
+      title: "Every AI reads the same notes",
+      body: "One connector for Claude · ChatGPT · Codex · Grok. Whichever AI you ask, it finds the same notes.",
     },
     {
       key: "folder",
-      title: "Automatic folder sorting",
-      body: "Just say “remember this” and the AI reads the meaning and files it under the right folder path. The tree grows without you sorting anything.",
+      title: "The AI does the filing",
+      body: "No folders to pick. Heirmos reads the meaning, files it in the right place, and finds it again with accurate search.",
     },
     {
-      key: "search",
-      title: "Hybrid search",
-      body: "Search that combines meaning (embeddings) with keywords, re-ranked by importance and recency. Tuned for Korean, it even handles particle boundaries well.",
-    },
-    {
-      key: "graph",
-      title: "Relationship graph",
-      body: "When you save a memory, Heirmos suggests how it relates to others — supports, contradicts, refines, and more. Knowledge connects as a web, not isolated points.",
+      key: "import",
+      title: "Old chats become notes",
+      body: "Drop in a ChatGPT or Claude export and Heirmos keeps only the facts and decisions worth remembering.",
     },
     {
       key: "version",
-      title: "Lossless · versioned",
-      body: "Edits keep the previous version, and deletes are soft — recoverable anytime. Never worry about losing a memory.",
+      title: "Nothing is ever lost",
+      body: "Edits keep the previous version and deletes go to an archive. Restore anything, anytime.",
     },
     {
       key: "isolation",
-      title: "Complete isolation",
-      body: "All data is isolated per user. Your memories are reachable only with your key, and secrets or sensitive data are protected by storage policy.",
+      title: "Your notes are yours",
+      body: "Every account is fully isolated. Passwords, card numbers and other sensitive data are blocked from being stored.",
     },
   ],
   how: {
     kicker: "Get going",
     title: "Three steps is all it takes",
-    body: "No installs, no code. Just connect the AI you already use.",
+    body: "No installs, no code.",
     steps: [
       {
         n: "01",
-        title: "Connect",
-        body: "Add the Heirmos connector to the AI you use. Claude.ai is one OAuth click; for the rest, a single issued key is all it takes.",
+        title: "Sign in, add to home screen",
+        body: "One Google sign-in opens your notepad. On a phone, use ‘Add to Home Screen’ to use it like an app.",
       },
       {
         n: "02",
-        title: "Save",
-        body: "Just say “remember this” mid-conversation. The AI distills the key points and files them into a folder.",
+        title: "Write when it hits you",
+        body: "No title, no folder. A single line is fine.",
       },
       {
         n: "03",
-        title: "Recall anywhere",
-        body: "Switch to another AI and the same memories come right back. No more explaining from scratch every time.",
+        title: "Connect your AI and ask",
+        body: "Connect Heirmos to the AI you use once, then just say “find it in my notes”. Claude.ai is a single click.",
       },
     ],
   },
   finalCta: {
-    title: "Make your AI remember you",
-    body: "Issue a key in the dashboard now and save your first memory. It only takes a few minutes.",
-    ctaPrimary: "Get started free",
-    ctaGhost: "Guide",
+    title: "Start with today's idea",
+    body: "One Google sign-in and your notepad is open. Connect your AI whenever you like.",
+    ctaPrimary: "Start writing — free",
+    ctaGhost: "AI connection guide",
     contactPre: "Have a question? Reach us at ",
     contactPost: ".",
   },
   footer: {
-    dashboard: "Dashboard",
+    dashboard: "Sign in",
     guide: "Guide",
     contact: "Contact",
     smitheryAria: "View Heirmos MCP on Smithery",

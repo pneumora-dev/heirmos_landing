@@ -58,3 +58,10 @@ body {
   html { scroll-behavior: auto; }
   * { animation: none !important; }
 }
+
+/* Korean wraps at word (eojeol) boundaries, never mid-word — without this,
+   narrow screens split headings like "앞에 / 서". */
+:lang(ko) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
