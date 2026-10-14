@@ -21,6 +21,10 @@ import { HeroConstellation } from "@/components/HeroConstellation";
 
 const SITE = "https://www.heirmos.com";
 const DASHBOARD_URL = "https://dashboard.heirmos.com";
+// CTA links go to /login with utm_* so the dashboard's Web Analytics can count
+// which button brought the visit (signed-in visitors are sent straight in).
+const ctaUrl = (content: "nav" | "hero" | "final" | "footer", locale: string) =>
+  `${DASHBOARD_URL}/login?utm_source=landing&utm_medium=cta&utm_content=${content}&utm_campaign=${locale}`;
 const GUIDE_URL = "https://dashboard.heirmos.com/guide";
 const CONTACT_EMAIL = "team.pneumora@gmail.com";
 
@@ -249,7 +253,7 @@ export default async function Home({
               {t.nav.guide}
             </a>
             <a
-              href={DASHBOARD_URL}
+              href={ctaUrl("nav", lang)}
               className="whitespace-nowrap rounded-full border border-white/[0.07] bg-white/[0.08] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/[0.14]"
             >
               {t.nav.dashboard}
@@ -286,7 +290,7 @@ export default async function Home({
               {t.hero.subtitle}
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <CtaButton href={DASHBOARD_URL} variant="primary">
+              <CtaButton href={ctaUrl("hero", lang)} variant="primary">
                 {t.hero.ctaPrimary}
                 <ArrowRight className="h-4 w-4" />
               </CtaButton>
@@ -413,7 +417,7 @@ export default async function Home({
                 {t.finalCta.body}
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-                <CtaButton href={DASHBOARD_URL} variant="primary">
+                <CtaButton href={ctaUrl("final", lang)} variant="primary">
                   {t.finalCta.ctaPrimary}
                   <ArrowRight className="h-4 w-4" />
                 </CtaButton>
@@ -441,7 +445,7 @@ export default async function Home({
         <div className="mx-auto flex max-w-[1160px] flex-col items-center justify-between gap-4 px-6 py-9 sm:flex-row">
           <Logo />
           <div className="flex items-center gap-6 text-sm text-[#828DAD]">
-            <a href={DASHBOARD_URL} className="hover:text-white">
+            <a href={ctaUrl("footer", lang)} className="hover:text-white">
               {t.footer.dashboard}
             </a>
             <a href={GUIDE_URL} className="hover:text-white">
