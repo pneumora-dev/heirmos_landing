@@ -1,7 +1,7 @@
 # Heirmos
 
-> Heirmos is cloud memory shared across AI assistants (Claude, ChatGPT, Codex, Grok, Gemini). Save a memory once from any AI, recall it from every other one. It also works as a quick notepad your AI can read. Korean-first, free to use.
-> Heirmos 는 여러 AI(Claude · ChatGPT · Codex · Grok · Gemini)가 공유하는 클라우드 기억입니다. 어느 AI 에서든 한 번 저장하면 다른 AI 에서 그대로 꺼내 씁니다. AI 가 읽는 빠른 메모장으로도 쓸 수 있습니다. 한국어 우선, 무료.
+> Heirmos is a quick notepad your AI reads. Jot a note from your phone's home screen, and Claude, ChatGPT, Codex, Grok or Gemini can search it and answer from it — the same memory is shared across every AI. Korean-first, free to use.
+> Heirmos 는 AI 가 읽는 빠른 메모장입니다. 폰 홈 화면에서 바로 적어두면 Claude · ChatGPT · Codex · Grok · Gemini 가 검색해 답합니다 — 같은 기억을 모든 AI 가 함께 씁니다. 한국어 우선, 무료.
 
 ## What it does / 무엇을 하나
 
