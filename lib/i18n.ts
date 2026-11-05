@@ -11,7 +11,8 @@ export function isLocale(value: string): value is Locale {
 }
 
 type Feature = { key: string; title: string; body: string };
-type Step = { n: string; title: string; body: string };
+/** `code` is shown verbatim in a mono block under the step (install commands). */
+type Step = { n: string; title: string; body: string; code?: string };
 
 export type Dictionary = {
   htmlLang: string;
@@ -36,22 +37,25 @@ export type Dictionary = {
     subtitle: string;
     ctaPrimary: string;
     ctaGhost: string;
-    worksWith: string;
   };
-  /** The "write on the phone, the AI reads it" scene under the hero. All
-   *  sample text is invented — never a real user's note. */
+  /** Two terminal panes: a Claude Code session ends and is captured, the next
+   *  day a Codex session starts with that decision in its briefing. All sample
+   *  text is invented — never a real user's memory. */
   demo: {
     kicker: string;
     title: string;
     body: string;
-    phoneTitle: string;
-    phoneNote: string;
-    phoneSaved: string;
-    phoneRecent: string;
-    phoneRecentItems: { title: string; when: string }[];
-    chatUser: string;
-    chatTool: string;
-    chatAi: string;
+    leftLabel: string;
+    leftWhen: string;
+    leftUser: string;
+    leftAgent: string;
+    leftCapture: string;
+    rightLabel: string;
+    rightWhen: string;
+    briefingTitle: string;
+    briefingItems: string[];
+    rightUser: string;
+    rightAgent: string;
   };
   problem: {
     kicker: string;
@@ -69,6 +73,7 @@ export type Dictionary = {
     title: string;
     body: string;
     steps: Step[];
+    otherAgents: string;
   };
   finalCta: {
     title: string;
@@ -91,16 +96,21 @@ export type Dictionary = {
   };
 };
 
+const INSTALL_CLI = "uv tool install heirmos-cli";
+const INSTALL_KEY = 'export HEIRMOS_API_KEY="hk_..."';
+const INSTALL_PLUGIN =
+  "/plugin marketplace add team-pneumora/pneumora-plugins\n/plugin install heirmos@pneumora-plugins";
+
 const ko: Dictionary = {
   htmlLang: "ko",
   ogLocale: "ko_KR",
   meta: {
-    title: "Heirmos — AI가 읽는 빠른 메모장",
+    title: "Heirmos — 코딩 에이전트의 기억",
     description:
-      "폰 홈 화면에서 바로 열리는 메모장. 적어둔 메모를 Claude · ChatGPT · Codex 가 그대로 읽고 답합니다. Google 로그인 한 번, 무료.",
+      "Claude Code · Codex 세션의 결정과 맥락을 자동으로 남기고, 다음 세션 시작에 브리핑으로 돌려줍니다. 에이전트를 바꿔도 같은 기억. CLI 설치 한 번, 무료.",
   },
   nav: {
-    guide: "이용 가이드",
+    guide: "설치 가이드",
     dashboard: "로그인",
   },
   langSwitch: {
@@ -109,106 +119,112 @@ const ko: Dictionary = {
     en: "English",
   },
   hero: {
-    badge: "AI가 읽는 빠른 메모장",
-    titleLine1: "적어두면,",
-    titleAccent: "AI가 기억합니다",
+    badge: "Claude Code · Codex 를 위한 기억",
+    titleLine1: "어제 정한 것을",
+    titleAccent: "오늘 에이전트가 압니다",
     subtitle:
-      "폰 홈 화면에서 바로 열리는 메모장. 떠오른 생각을 적어두면 Claude · ChatGPT · Codex 가 그 메모를 읽고 답합니다. 더는 AI에게 처음부터 설명하지 마세요.",
-    ctaPrimary: "무료로 메모 시작하기",
-    ctaGhost: "어떻게 쓰나요",
-    worksWith: "메모를 읽는 AI",
+      "세션이 끝나면 결정·선호·맥락을 자동으로 남기고, 다음 세션이 시작될 때 브리핑으로 돌려줍니다. Claude Code 에서 정한 것을 Codex 가 이어받습니다. “기억해” 라고 말할 필요도 없습니다.",
+    ctaPrimary: "무료로 시작하기",
+    ctaGhost: "어떻게 동작하나요",
   },
   demo: {
-    kicker: "이렇게 씁니다",
-    title: "폰에 적고, AI에게 물어보세요",
-    body: "메모장은 바로 열리고 오프라인에서도 적힙니다. 연결된 AI는 묻는 순간 당신의 메모를 찾아 읽습니다.",
-    phoneTitle: "빠른 메모",
-    phoneNote: "사이드 프로젝트 이름 후보\n- 담다\n- 한줄\n- 모아\n→ 짧고 동사형이 좋다. 도메인 확인하기",
-    phoneSaved: "저장됨",
-    phoneRecent: "최근 메모",
-    phoneRecentItems: [
-      { title: "다음 주 발표 구성 메모", when: "2시간 전" },
-      { title: "읽을 책 — 리스트 업데이트", when: "어제" },
+    kicker: "이렇게 이어집니다",
+    title: "월요일 Claude Code 의 결정, 화요일 Codex 가 압니다",
+    body: "세션이 끝날 때 훅이 대화에서 오래 남을 것만 추려 저장합니다. 다음 세션은 그 저장소의 최근 결정을 브리핑으로 받고 시작합니다.",
+    leftLabel: "Claude Code",
+    leftWhen: "월요일",
+    leftUser: "결제 재시도는 큐로 빼지 말고 일단 동기로 가자. 웹훅 중복은 idempotency key 로 막고.",
+    leftAgent: "좋습니다. 재시도는 동기 3회 · 지수 백오프로 두고, 웹훅은 event_id 를 키로 중복을 거릅니다.",
+    leftCapture: "세션 종료 · 기억 3개 저장됨",
+    rightLabel: "Codex",
+    rightWhen: "화요일",
+    briefingTitle: "세션 시작 브리핑 · 이 저장소",
+    briefingItems: [
+      "결제 재시도 = 동기 3회 + 지수 백오프 (큐 도입 보류)",
+      "웹훅 중복 방지 = event_id idempotency key",
     ],
-    chatUser: "내가 적어둔 사이드 프로젝트 이름 후보 중에 하나 골라줘",
-    chatTool: "Heirmos 메모 검색 · 1건",
-    chatAi: "메모에 적으신 기준이 “짧고 동사형”이었죠. 그 기준이면 ‘담다’가 가장 잘 맞아요. 다음으로 적어두신 도메인 확인부터 해볼까요?",
+    rightUser: "환불 웹훅 핸들러 추가해줘",
+    rightAgent: "어제 정한 대로 event_id 로 중복을 거르고, 실패 시 동기 3회 재시도로 붙이겠습니다.",
   },
   problem: {
     kicker: "왜 필요한가요",
-    title: "좋은 생각은 AI 앞에서 떠오르지 않습니다",
-    body: "아이디어는 길에서, 회의 중에, 자기 전에 옵니다. 메모 앱에 적으면 AI는 모르고, AI 채팅에 쓰면 대화창과 함께 묻힙니다. 그래서 매번 처음부터 다시 설명하게 됩니다.",
+    title: "에이전트는 매 세션 처음부터 시작합니다",
+    body: "결정은 대화 속에서 내려지는데, 세션이 끝나거나 컴팩트가 지나가면 “왜 그렇게 정했는지” 가 사라집니다. CLAUDE.md 에 다 옮겨 적기엔 너무 자주 바뀌고, 에이전트를 바꾸면 처음부터 다시 설명합니다.",
   },
   solution: {
     kicker: "Heirmos",
-    title: "메모장과 AI 사이를 잇습니다",
-    body: "적는 건 메모장처럼 가볍게, 꺼내 쓰는 건 AI가 알아서.",
+    title: "세션과 세션, 에이전트와 에이전트 사이를 잇습니다",
+    body: "남기는 건 훅이 알아서, 꺼내는 건 세션 시작 브리핑이.",
   },
   features: [
     {
-      key: "instant",
-      title: "바로 열리는 메모장",
-      body: "홈 화면 아이콘을 누르면 바로 입력창. 폰에 먼저 저장되니 지하철·비행기에서도 적히고, 연결되면 알아서 올라갑니다.",
+      key: "capture",
+      title: "자동으로 남김",
+      body: "컴팩트 직전과 세션 종료 때 훅이 대화를 보내고, 추출 엔진이 오래 남을 사실·결정·선호만 기억으로 만듭니다.",
     },
     {
-      key: "connect",
-      title: "모든 AI가 같은 메모를 읽음",
-      body: "Claude · ChatGPT · Codex · Grok 에 커넥터 한 번이면 끝. 어느 AI에서 물어도 같은 메모를 찾아 답합니다.",
+      key: "briefing",
+      title: "세션 시작 브리핑",
+      body: "새 세션 첫 맥락으로 이 저장소의 최근 결정과, 지금 작업에 닿는 오래된 기억을 짧게 넣어 줍니다.",
     },
     {
-      key: "folder",
-      title: "정리는 AI가",
-      body: "폴더를 고를 필요가 없습니다. 의미를 읽어 알맞은 자리에 두고, 한국어 검색도 정확하게 찾아냅니다.",
+      key: "cross",
+      title: "에이전트를 바꿔도 같은 기억",
+      body: "Claude Code · Codex · Cursor 가 같은 기억을 씁니다. MCP 로 연결하면 Claude.ai · ChatGPT 에서도 꺼내 볼 수 있습니다.",
     },
     {
-      key: "import",
-      title: "지난 대화도 메모로",
-      body: "ChatGPT · Claude 대화 내보내기 파일을 넣으면 오래 남길 사실과 결정만 골라 메모로 만들어 줍니다.",
+      key: "privacy",
+      title: "보내는 건 대화 글만",
+      body: "당신의 프롬프트와 에이전트의 답변 글만 나갑니다. 도구 출력·파일 내용·thinking 은 빼고, 키·토큰 모양 문자열은 기기에서 가립니다.",
     },
     {
-      key: "version",
-      title: "지워도 잃지 않음",
-      body: "수정하면 이전 버전이 남고, 삭제는 보관함으로 갑니다. 언제든 되살릴 수 있습니다.",
+      key: "safe",
+      title: "세션을 막지 않음",
+      body: "CLI 가 없거나, 키가 없거나, 네트워크가 끊겨도 훅은 조용히 넘어갑니다. 저장은 백그라운드에서 끝납니다.",
     },
     {
       key: "isolation",
-      title: "내 메모는 나만",
-      body: "모든 메모는 계정별로 완전히 분리됩니다. 비밀번호·카드번호 같은 민감 정보는 저장하지 않도록 막습니다.",
+      title: "내 기억은 나만",
+      body: "계정별로 완전히 분리되고, 수정하면 이전 버전이 남고 삭제는 보관함으로 갑니다. 대시보드에서 직접 고치고 지울 수 있습니다.",
     },
   ],
   how: {
-    kicker: "시작하기",
-    title: "3단계면 충분합니다",
-    body: "설치도, 코드도 필요 없습니다.",
+    kicker: "설치",
+    title: "Claude Code 기준 3단계",
+    body: "새 세션의 첫 맥락이 브리핑이면 연결된 겁니다.",
     steps: [
       {
         n: "01",
-        title: "로그인하고 홈 화면에 추가",
-        body: "Google 로그인 한 번이면 메모장이 열립니다. 폰에서는 ‘홈 화면에 추가’로 앱처럼 쓰세요.",
+        title: "CLI 설치",
+        body: "플러그인이 쓰는 heirmos 명령입니다. pipx install heirmos-cli 도 됩니다.",
+        code: INSTALL_CLI,
       },
       {
         n: "02",
-        title: "떠오르면 적기",
-        body: "제목도 폴더도 필요 없습니다. 한 줄이어도 괜찮아요.",
+        title: "API 키 발급",
+        body: "Google 로그인 후 계정 → API 키에서 발급해 환경 변수로 둡니다.",
+        code: INSTALL_KEY,
       },
       {
         n: "03",
-        title: "AI에 연결하고 물어보기",
-        body: "쓰는 AI에 Heirmos 를 한 번 연결하면 “내 메모에서 찾아줘” 한마디로 꺼내 씁니다. Claude.ai 는 클릭 한 번.",
+        title: "플러그인 설치",
+        body: "Claude Code 안에서 실행하고 /reload-plugins 또는 재시작.",
+        code: INSTALL_PLUGIN,
       },
     ],
+    otherAgents: "Codex · Cursor 연결은 설치 가이드에 있습니다.",
   },
   finalCta: {
-    title: "오늘 떠오른 생각부터 적어두세요",
-    body: "Google 로그인 한 번이면 바로 메모장이 열립니다. AI 연결은 나중에 해도 됩니다.",
-    ctaPrimary: "무료로 메모 시작하기",
-    ctaGhost: "AI 연결 가이드",
-    contactPre: "궁금한 점이 있으신가요? ",
-    contactPost: " 로 문의하세요.",
+    title: "다음 세션부터, 어제를 기억하는 에이전트",
+    body: "로그인해서 API 키를 받으면 5분 안에 설치가 끝납니다. 무료입니다.",
+    ctaPrimary: "무료로 시작하기",
+    ctaGhost: "설치 가이드",
+    contactPre: "설치가 막히면 ",
+    contactPost: " 로 알려 주세요. 직접 도와드립니다.",
   },
   footer: {
     dashboard: "로그인",
-    guide: "이용 가이드",
+    guide: "설치 가이드",
     contact: "문의",
     smitheryAria: "Smithery 에서 Heirmos MCP 보기",
   },
@@ -223,12 +239,12 @@ const en: Dictionary = {
   htmlLang: "en",
   ogLocale: "en_US",
   meta: {
-    title: "Heirmos — The quick notepad your AI reads",
+    title: "Heirmos — Memory for your coding agents",
     description:
-      "A notepad that opens straight from your home screen. Claude, ChatGPT and Codex read what you jot down and answer with it. One Google sign-in, free.",
+      "Heirmos captures the decisions and context from your Claude Code and Codex sessions and hands them back as a briefing when the next session starts. Switch agents, keep the memory. One CLI install, free.",
   },
   nav: {
-    guide: "Guide",
+    guide: "Install guide",
     dashboard: "Sign in",
   },
   langSwitch: {
@@ -237,106 +253,112 @@ const en: Dictionary = {
     en: "English",
   },
   hero: {
-    badge: "The quick notepad your AI reads",
-    titleLine1: "Jot it down,",
-    titleAccent: "your AI remembers",
+    badge: "Memory for Claude Code · Codex",
+    titleLine1: "Decided yesterday.",
+    titleAccent: "Known today.",
     subtitle:
-      "A notepad that opens straight from your home screen. Write a thought down and Claude · ChatGPT · Codex read that note when you ask. Stop explaining everything from scratch.",
-    ctaPrimary: "Start writing — free",
+      "When a session ends, Heirmos keeps the decisions, preferences and context. When the next one starts, it hands them back as a briefing. Decide something in Claude Code, and Codex picks it up. You never have to say “remember this”.",
+    ctaPrimary: "Start free",
     ctaGhost: "How it works",
-    worksWith: "AIs that read your notes",
   },
   demo: {
-    kicker: "In practice",
-    title: "Write on your phone. Ask your AI.",
-    body: "The notepad opens instantly and works offline. A connected AI finds and reads your notes the moment you ask.",
-    phoneTitle: "Quick memo",
-    phoneNote: "Side project name ideas\n- Keep\n- Jot\n- Gather\n→ short + a verb works best. check domains",
-    phoneSaved: "Saved",
-    phoneRecent: "Recent notes",
-    phoneRecentItems: [
-      { title: "Outline for next week's talk", when: "2h ago" },
-      { title: "Books to read — updated list", when: "Yesterday" },
+    kicker: "How it carries over",
+    title: "Monday's decision in Claude Code. Tuesday, Codex knows it.",
+    body: "When a session ends, a hook keeps only what's worth remembering. The next session starts with this repo's recent decisions as a briefing.",
+    leftLabel: "Claude Code",
+    leftWhen: "Monday",
+    leftUser: "Let's keep payment retries synchronous for now, no queue. Dedupe webhooks with an idempotency key.",
+    leftAgent: "Got it. Retries stay synchronous, 3 attempts with exponential backoff, and webhooks are deduped by event_id.",
+    leftCapture: "Session ended · 3 memories saved",
+    rightLabel: "Codex",
+    rightWhen: "Tuesday",
+    briefingTitle: "Session briefing · this repo",
+    briefingItems: [
+      "Payment retries = 3 synchronous attempts + exponential backoff (queue on hold)",
+      "Webhook dedupe = event_id idempotency key",
     ],
-    chatUser: "Pick one of the side project names I wrote down",
-    chatTool: "Heirmos note search · 1 result",
-    chatAi: "Your note says you want something “short and a verb”. By that rule, ‘Keep’ fits best. Want to start on the domain check you noted next?",
+    rightUser: "Add a refund webhook handler",
+    rightAgent: "Following yesterday's decision: I'll dedupe on event_id and retry failures synchronously, 3 times.",
   },
   problem: {
     kicker: "Why it matters",
-    title: "Good ideas don't show up while you're chatting with an AI",
-    body: "They come on the street, in meetings, right before sleep. Put them in a notes app and your AI never sees them; put them in a chat and they sink with the thread. So you explain everything again, every time.",
+    title: "Your agent starts every session from zero",
+    body: "Decisions get made in the conversation. Then the session ends, or compaction runs, and the “why” is gone. CLAUDE.md changes too often to keep by hand, and switching agents means explaining everything again.",
   },
   solution: {
     kicker: "Heirmos",
-    title: "A bridge between your notes and your AI",
-    body: "Writing feels like a notepad. Recall is the AI's job.",
+    title: "A bridge between sessions, and between agents",
+    body: "Hooks do the saving. The session-start briefing does the recall.",
   },
   features: [
     {
-      key: "instant",
-      title: "Opens instantly",
-      body: "Tap the home-screen icon and you're typing. Notes save to your phone first, so they work on the subway or a plane and sync once you're back online.",
+      key: "capture",
+      title: "Captured automatically",
+      body: "Before compaction and at session end, a hook sends the conversation and the extraction engine keeps only durable facts, decisions and preferences.",
     },
     {
-      key: "connect",
-      title: "Every AI reads the same notes",
-      body: "One connector for Claude · ChatGPT · Codex · Grok. Whichever AI you ask, it finds the same notes.",
+      key: "briefing",
+      title: "Session-start briefing",
+      body: "Every new session opens with this repo's recent decisions, plus older memories that touch what you're about to do.",
     },
     {
-      key: "folder",
-      title: "The AI does the filing",
-      body: "No folders to pick. Heirmos reads the meaning, files it in the right place, and finds it again with accurate search.",
+      key: "cross",
+      title: "Same memory across agents",
+      body: "Claude Code, Codex and Cursor share one memory. Connect over MCP and Claude.ai or ChatGPT can read it too.",
     },
     {
-      key: "import",
-      title: "Old chats become notes",
-      body: "Drop in a ChatGPT or Claude export and Heirmos keeps only the facts and decisions worth remembering.",
+      key: "privacy",
+      title: "Only the conversation leaves",
+      body: "Just your prompts and the agent's prose. Tool output, file contents and thinking are dropped, and key-shaped strings are redacted on your machine.",
     },
     {
-      key: "version",
-      title: "Nothing is ever lost",
-      body: "Edits keep the previous version and deletes go to an archive. Restore anything, anytime.",
+      key: "safe",
+      title: "Never blocks a session",
+      body: "No CLI, no key, no network? The hooks exit quietly. Saving finishes in the background.",
     },
     {
       key: "isolation",
-      title: "Your notes are yours",
-      body: "Every account is fully isolated. Passwords, card numbers and other sensitive data are blocked from being stored.",
+      title: "Your memory is yours",
+      body: "Fully isolated per account. Edits keep the previous version and deletes go to an archive. Fix or remove anything from the dashboard.",
     },
   ],
   how: {
-    kicker: "Get going",
-    title: "Three steps is all it takes",
-    body: "No installs, no code.",
+    kicker: "Install",
+    title: "Three steps for Claude Code",
+    body: "If a new session's first context is a briefing, you're connected.",
     steps: [
       {
         n: "01",
-        title: "Sign in, add to home screen",
-        body: "One Google sign-in opens your notepad. On a phone, use ‘Add to Home Screen’ to use it like an app.",
+        title: "Install the CLI",
+        body: "The heirmos command the plugin drives. pipx install heirmos-cli works too.",
+        code: INSTALL_CLI,
       },
       {
         n: "02",
-        title: "Write when it hits you",
-        body: "No title, no folder. A single line is fine.",
+        title: "Get an API key",
+        body: "Sign in with Google, open Account → API keys, and export it.",
+        code: INSTALL_KEY,
       },
       {
         n: "03",
-        title: "Connect your AI and ask",
-        body: "Connect Heirmos to the AI you use once, then just say “find it in my notes”. Claude.ai is a single click.",
+        title: "Install the plugin",
+        body: "Run inside Claude Code, then /reload-plugins or restart.",
+        code: INSTALL_PLUGIN,
       },
     ],
+    otherAgents: "Codex and Cursor setup is in the install guide.",
   },
   finalCta: {
-    title: "Start with today's idea",
-    body: "One Google sign-in and your notepad is open. Connect your AI whenever you like.",
-    ctaPrimary: "Start writing — free",
-    ctaGhost: "AI connection guide",
-    contactPre: "Have a question? Reach us at ",
-    contactPost: ".",
+    title: "From the next session on, an agent that remembers yesterday",
+    body: "Sign in, grab an API key, and you're set up in five minutes. Free.",
+    ctaPrimary: "Start free",
+    ctaGhost: "Install guide",
+    contactPre: "Stuck on setup? Write to ",
+    contactPost: " and we'll help you directly.",
   },
   footer: {
     dashboard: "Sign in",
-    guide: "Guide",
+    guide: "Install guide",
     contact: "Contact",
     smitheryAria: "View Heirmos MCP on Smithery",
   },

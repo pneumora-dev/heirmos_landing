@@ -1,12 +1,11 @@
 import {
   ArrowRight,
-  Download,
-  FolderTree,
-  History,
+  Brain,
+  FileText,
   Lock,
-  Plug,
-  Search,
-  Zap,
+  Repeat,
+  ShieldCheck,
+  Terminal,
 } from "lucide-react";
 import { notFound } from "next/navigation";
 import {
@@ -28,66 +27,76 @@ const ctaUrl = (content: "nav" | "hero" | "final" | "footer", locale: string) =>
 const GUIDE_URL = "https://dashboard.heirmos.com/guide";
 const CONTACT_EMAIL = "team.pneumora@gmail.com";
 
-// Labels drawn on the constellation canvas (one node per AI).
-const AIS = ["Claude", "ChatGPT", "Grok", "Gemini", "Codex"];
+// Labels drawn on the constellation canvas (one node per agent / AI client).
+const AIS = ["Claude Code", "Codex", "Cursor", "Claude", "ChatGPT"];
 
 // Feature/step copy lives in the dictionary; icons are matched here by key.
 const FEATURE_ICONS = {
-  instant: Zap,
-  connect: Plug,
-  folder: FolderTree,
-  import: Download,
-  version: History,
+  capture: FileText,
+  briefing: Brain,
+  cross: Repeat,
+  privacy: ShieldCheck,
+  safe: Terminal,
   isolation: Lock,
 } as const;
 
-/** The demo scene: a drawn `/q` phone screen next to an AI chat that answers
- *  from that note. Pure markup (no screenshot) so it stays crisp, translatable,
- *  and can never leak a real note — every string comes from the dictionary. */
+/** One terminal-style pane (window chrome + agent name + day). */
+function Pane({
+  label,
+  when,
+  children,
+}: {
+  label: string;
+  when: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0d1a] shadow-[0_30px_80px_-40px_rgba(91,141,239,0.55)]">
+      <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5">
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="ml-2 font-mono text-[12px] text-[#C9D3F0]">{label}</span>
+        <span className="ml-auto font-mono text-[11.5px] text-[#6E7693]">{when}</span>
+      </div>
+      <div className="space-y-3 px-4 py-4 font-mono text-[13px] leading-[1.65] md:px-5">{children}</div>
+    </div>
+  );
+}
+
+/** The demo scene: a Claude Code session that gets captured, and the next
+ *  day's Codex session that starts with that decision in its briefing. Pure
+ *  markup so it stays crisp and translatable — every string is invented and
+ *  comes from the dictionary. */
 function DemoScene({ d }: { d: Dictionary["demo"] }) {
   return (
-    <div className="mt-14 grid items-center gap-8 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)] md:gap-12">
-      {/* Phone — mirrors the real /q layout: header, open note, recent list */}
-      <div className="mx-auto w-full max-w-[320px] rounded-[42px] border border-white/10 bg-[#0b0e1c] p-3 shadow-[0_30px_80px_-30px_rgba(91,141,239,0.55)]">
-        <div className="overflow-hidden rounded-[32px] bg-white text-zinc-900">
-          <div className="flex items-center justify-between px-5 pt-5 pb-3">
-            <span className="text-[15px] font-semibold">{d.phoneTitle}</span>
-            <span className="flex items-center gap-1.5 text-[11.5px] text-emerald-600">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              {d.phoneSaved}
-            </span>
-          </div>
-          <div className="mx-4 min-h-[188px] whitespace-pre-line rounded-2xl bg-zinc-50 px-4 py-3.5 text-[14px] leading-[1.7] text-zinc-800">
-            {d.phoneNote}
-            <span className="ml-0.5 inline-block h-[17px] w-[1.5px] translate-y-[3px] animate-pulse bg-[#5B8DEF]" />
-          </div>
-          <div className="px-5 pt-5 pb-6">
-            <div className="text-[11.5px] font-medium text-zinc-400">{d.phoneRecent}</div>
-            <ul className="mt-2 divide-y divide-zinc-100">
-              {d.phoneRecentItems.map((it) => (
-                <li key={it.title} className="flex items-center justify-between py-2.5 text-[13px]">
-                  <span className="truncate text-zinc-700">{it.title}</span>
-                  <span className="ml-3 shrink-0 text-[11.5px] text-zinc-400">{it.when}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <div className="mt-14 grid items-start gap-5 md:grid-cols-2 md:gap-6">
+      <Pane label={d.leftLabel} when={d.leftWhen}>
+        <p className="text-[#E6ECFF]">
+          <span className="text-[#7FB0FF]">&gt; </span>
+          {d.leftUser}
+        </p>
+        <p className="text-[#9AA6C8]">{d.leftAgent}</p>
+        <p className="flex items-center gap-2 border-t border-white/[0.06] pt-3 text-[12px] text-emerald-400/90">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          {d.leftCapture}
+        </p>
+      </Pane>
+      <Pane label={d.rightLabel} when={d.rightWhen}>
+        <div className="rounded-lg border border-[#8B6BFF]/30 bg-[#8B6BFF]/[0.08] px-3 py-2.5">
+          <div className="text-[11.5px] text-[#C9BEFF]">{d.briefingTitle}</div>
+          <ul className="mt-1.5 space-y-1 text-[12.5px] text-[#D6DEF5]">
+            {d.briefingItems.map((it) => (
+              <li key={it}>· {it}</li>
+            ))}
+          </ul>
         </div>
-      </div>
-
-      {/* Chat — the AI answers from the note above */}
-      <div className="rounded-3xl border border-white/[0.08] bg-white/[0.025] p-6 md:p-8">
-        <div className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-[#5B8DEF] px-4 py-3 text-[15px] leading-relaxed text-white">
-          {d.chatUser}
-        </div>
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#8B6BFF]/30 bg-[#8B6BFF]/10 px-3 py-1 text-[12px] text-[#C9BEFF]">
-          <Search className="h-3.5 w-3.5" />
-          {d.chatTool}
-        </div>
-        <div className="mt-3 max-w-[92%] rounded-2xl rounded-bl-md bg-white/[0.06] px-4 py-3 text-[15px] leading-[1.7] text-[#D6DEF5]">
-          {d.chatAi}
-        </div>
-      </div>
+        <p className="text-[#E6ECFF]">
+          <span className="text-[#7FB0FF]">&gt; </span>
+          {d.rightUser}
+        </p>
+        <p className="text-[#9AA6C8]">{d.rightAgent}</p>
+      </Pane>
     </div>
   );
 }
@@ -210,7 +219,7 @@ export default async function Home({
         url: `${SITE}/${locale}`,
         inLanguage: locale,
         description: t.meta.description,
-        applicationCategory: "ProductivityApplication",
+        applicationCategory: "DeveloperApplication",
         operatingSystem: "Web",
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
         featureList: t.features.map((f) => f.title),
@@ -301,7 +310,7 @@ export default async function Home({
           </div>
         </section>
 
-        {/* ── Demo: write on the phone, the AI reads it ───────── */}
+        {/* ── Demo: one agent decides, the next one knows ─────── */}
         <section id="how-it-works" className="border-t border-white/[0.06]">
           <div className="mx-auto max-w-[1000px] px-6 py-24 md:py-28">
             <div className="mx-auto max-w-[620px] text-center">
@@ -368,7 +377,7 @@ export default async function Home({
         </section>
 
         {/* ── How it works ────────────────────────────────────── */}
-        <section id="how" className="border-t border-white/[0.06]">
+        <section id="install" className="border-t border-white/[0.06]">
           <div className="mx-auto max-w-[1000px] px-6 py-26 md:py-28">
             <div className="mx-auto max-w-[600px] text-center">
               <Kicker>{t.how.kicker}</Kicker>
@@ -380,8 +389,8 @@ export default async function Home({
               </p>
             </div>
             <div className="mt-15 grid gap-8 md:grid-cols-3">
-              {t.how.steps.map(({ n, title, body }) => (
-                <div key={n}>
+              {t.how.steps.map(({ n, title, body, code }) => (
+                <div key={n} className="min-w-0">
                   <div
                     className="font-mono text-5xl font-semibold text-transparent"
                     style={{ WebkitTextStroke: "1px rgba(143,180,255,0.4)" }}
@@ -394,9 +403,22 @@ export default async function Home({
                   <p className="mt-2.5 text-[14.5px] leading-[1.66] text-[#828DAD]">
                     {body}
                   </p>
+                  {code ? (
+                    <pre className="mt-4 whitespace-pre-wrap break-all rounded-xl border border-white/[0.07] bg-[#0a0d1a] px-4 py-3 font-mono text-[12.5px] leading-[1.7] text-[#C9D3F0]">
+                      <code>{code}</code>
+                    </pre>
+                  ) : null}
                 </div>
               ))}
             </div>
+            <p className="mt-10 text-center text-[14.5px] text-[#828DAD]">
+              <a
+                href={GUIDE_URL}
+                className="text-[#9FC0FF] underline decoration-[#9FC0FF]/35 underline-offset-2 hover:decoration-[#9FC0FF]"
+              >
+                {t.how.otherAgents}
+              </a>
+            </p>
           </div>
         </section>
 

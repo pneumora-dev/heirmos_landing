@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Heirmos",
     short_name: "Heirmos",
-    description: "여러 AI 가 공유하는 영구 기억",
+    description: "코딩 에이전트의 기억 — Claude Code · Codex",
     start_url: "/",
     display: "standalone",
     background_color: "#050b1a",

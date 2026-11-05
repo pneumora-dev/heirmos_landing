@@ -1,29 +1,33 @@
 # Heirmos
 
-> Heirmos is a quick notepad your AI reads. Jot a note from your phone's home screen, and Claude, ChatGPT, Codex, Grok or Gemini can search it and answer from it — the same memory is shared across every AI. Korean-first, free to use.
-> Heirmos 는 AI 가 읽는 빠른 메모장입니다. 폰 홈 화면에서 바로 적어두면 Claude · ChatGPT · Codex · Grok · Gemini 가 검색해 답합니다 — 같은 기억을 모든 AI 가 함께 씁니다. 한국어 우선, 무료.
+> Heirmos is memory for coding agents. A Claude Code plugin (and Codex / Cursor integrations) captures the durable decisions, preferences and context from each session and hands them back as a briefing when the next session starts — so a decision made in Claude Code on Monday is known to Codex on Tuesday. The same memory is readable from Claude.ai and ChatGPT over MCP. Korean-first, free to use.
+> Heirmos 는 코딩 에이전트의 기억입니다. Claude Code 플러그인(Codex · Cursor 연동 포함)이 세션의 결정·선호·맥락을 자동으로 남기고, 다음 세션 시작에 브리핑으로 돌려줍니다 — 월요일 Claude Code 에서 정한 것을 화요일 Codex 가 압니다. 같은 기억을 MCP 로 Claude.ai · ChatGPT 에서도 읽습니다. 한국어 우선, 무료.
 
 ## What it does / 무엇을 하나
 
-- Connects to any AI that supports MCP (Model Context Protocol) or plain REST: Claude.ai uses OAuth, everything else uses one issued API key.
-- Memories are stored as a folder tree of markdown-like notes (one topic = one path such as `projects/x/y.md`). The AI files new memories automatically.
-- Hybrid search (embeddings + keywords, tuned for Korean), relationship suggestions between memories, versioning with soft delete, strict per-user isolation.
-- Quick memo (`/q`): a phone-style notepad that opens instantly and saves to the same memory the AIs read.
-- Import of ChatGPT / Claude conversation exports; coding-agent hooks (Claude Code, Codex, Cursor) that brief and capture memory automatically.
-- MCP 또는 REST 를 지원하는 어떤 AI 에나 연결됩니다. Claude.ai 는 OAuth, 나머지는 발급한 키 하나.
-- 기억은 폴더 트리(한 토픽 = 한 경로)로 저장되고 AI 가 알아서 분류합니다. 하이브리드 검색·관계 제안·버전 관리·사용자별 완전 격리.
-- 빠른 메모 `/q`: 홈 화면에서 바로 열리는 메모장. 여기 적은 것을 연결된 AI 가 읽습니다.
+- Session start: `heirmos briefing` injects this repo's recent decisions plus older memories relevant to the task (≤ ~1 500 tokens) into the agent's context.
+- Pre-compaction / session end: `heirmos capture` sends only the user's prompts and the agent's prose (no tool output, file contents or thinking), with credential-shaped strings redacted client-side; the server keeps only durable facts, decisions and preferences.
+- Hooks never block a session: no CLI, no key or no network means a silent exit.
+- Cross-agent: Claude Code, Codex (AGENTS.md + MCP) and Cursor (rules) share one memory; Claude.ai and ChatGPT connect over MCP.
+- Memories are a folder tree of markdown notes with hybrid search (embeddings + keywords, tuned for Korean), versioning with soft delete and strict per-user isolation.
+- 세션 시작 브리핑 · 컴팩트 직전/세션 종료 자동 캡처(대화 글만, 기기에서 키 리댁션) · 세션을 막지 않음 · Claude Code / Codex / Cursor 공유 기억.
+
+## Install (Claude Code)
+
+1. `uv tool install heirmos-cli` (PyPI, MIT, depends only on httpx)
+2. Sign in at https://dashboard.heirmos.com, mint an API key under Account → API keys, `export HEIRMOS_API_KEY="hk_..."`
+3. In Claude Code: `/plugin marketplace add team-pneumora/pneumora-plugins` then `/plugin install heirmos@pneumora-plugins`
 
 ## Endpoints
 
 - MCP server (Streamable HTTP): https://mcp.heirmos.com/mcp
 - REST API: https://api.heirmos.com (Bearer `hk_…` keys issued in the dashboard)
 - Dashboard / sign-up (Google login): https://dashboard.heirmos.com
-- Quick memo: https://dashboard.heirmos.com/q
+- CLI: https://pypi.org/project/heirmos-cli/
 
 ## Docs / 문서
 
-- [User guide (ko/en) / 이용 가이드](https://dashboard.heirmos.com/guide): connecting Claude.ai, ChatGPT, Codex, Grok, Cursor; keys; import; FAQ.
+- [Install & user guide (ko/en) / 설치·이용 가이드](https://dashboard.heirmos.com/guide): Claude Code plugin, Codex, Cursor, Claude.ai, ChatGPT; keys; FAQ.
 - [Privacy policy](https://dashboard.heirmos.com/privacy)
 - [Terms of service](https://dashboard.heirmos.com/terms)
 - [Landing (ko)](https://www.heirmos.com/ko) · [Landing (en)](https://www.heirmos.com/en)
